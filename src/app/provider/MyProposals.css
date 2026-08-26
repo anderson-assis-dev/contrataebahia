@@ -1,0 +1,36 @@
+.myprop {
+  display: block;
+  padding: 16px 17px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-xs);
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.myprop:hover {
+  border-color: var(--blue-300);
+  transform: translateY(-2px);
+}
+
+.myprop-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.myprop-top h3 {
+  font-size: 0.99rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.myprop-price {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--blue);
+}

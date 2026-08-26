@@ -1,0 +1,133 @@
+.ao-party {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-xs);
+}
+
+.ao-party img,
+.ao-party-initials {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ao-party-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-blue);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.ao-party-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ao-party-info strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  color: var(--text);
+}
+
+.ao-party-info span {
+  font-size: 0.8rem;
+  color: var(--muted2);
+}
+
+.ao-party-call {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--blue);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.ao-party-call:hover {
+  border-color: var(--blue);
+  background: var(--blue-50);
+}
+
+.ao-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.ao-tab {
+  flex: 1;
+  min-width: 96px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.ao-tab:hover {
+  background: var(--blue-50);
+  color: var(--blue);
+}
+
+.ao-tab-on {
+  background: var(--blue);
+  color: #fff;
+}
+
+.ao-tab-on:hover {
+  background: var(--blue-700);
+  color: #fff;
+}
+
+.ao-desc {
+  margin-top: 8px;
+  font-size: 0.89rem;
+  line-height: 1.65;
+  color: var(--text-soft);
+  white-space: pre-wrap;
+}
+
+@media (max-width: 560px) {
+  .ao-party {
+    flex-wrap: wrap;
+  }
+
+  .ao-party-call {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,129 @@
+.vis-lock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 36px 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.vis-lock-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.vis-lock h2 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.vis-lock p {
+  max-width: 420px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.vis-lock ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0 8px;
+  text-align: left;
+}
+
+.vis-lock li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+
+.vis-lock .f-submit {
+  max-width: 360px;
+}
+
+.vis-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.vis-cats,
+.vis-viewers {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.vis-cats li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.86rem;
+}
+
+.vis-cats li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.vis-viewers li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vis-viewers img,
+.vis-viewers span {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.vis-viewers span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-blue);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.vis-viewers strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.vis-viewers em {
+  font-style: normal;
+  font-size: 0.76rem;
+  color: var(--muted2);
+}
+
+@media (min-width: 860px) {
+  .vis-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

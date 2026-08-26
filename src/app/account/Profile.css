@@ -1,0 +1,129 @@
+.prof-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 20px;
+  background: var(--grad-blue);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-blue);
+}
+
+.prof-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.prof-avatar {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+}
+
+.prof-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.prof-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prof-avatar-btn {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.2s;
+}
+
+.prof-avatar-btn:hover {
+  background: var(--red-700);
+}
+
+.prof-hero-info {
+  min-width: 0;
+}
+
+.prof-hero-info strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.16rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.prof-hero-info > span {
+  display: block;
+  font-size: 0.86rem;
+  color: rgba(255, 255, 255, 0.82);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prof-role {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.prof-danger:hover {
+  border-color: var(--red-100);
+  background: var(--red-50);
+  color: var(--red);
+}
+
+.prof-danger-solid {
+  background: var(--red);
+}
+
+.prof-danger-solid:hover:not(:disabled) {
+  background: var(--red-700);
+}
+
+.prof-refresh {
+  border: 0;
+  background: none;
+  padding: 4px;
+  font-size: 0.82rem;
+  color: var(--muted2);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.prof-refresh:hover {
+  color: var(--blue);
+}
+
+@media (max-width: 520px) {
+  .prof-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+}

@@ -1,7 +1,13 @@
 export const onlyDigits = (v) => String(v).replaceAll(/\D/g, '');
 
+export const normalizePhone = (v) => {
+  let d = onlyDigits(v);
+  if (d.startsWith('55') && d.length > 11) d = d.slice(2);
+  return d.slice(0, 11);
+};
+
 export const formatPhone = (v) => {
-  const d = onlyDigits(v).slice(0, 11);
+  const d = normalizePhone(v);
   if (d.length <= 2) return d;
   if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
@@ -30,6 +36,12 @@ export const formatDate = (v) => {
   if (d.length <= 2) return d;
   if (d.length <= 4) return `${d.slice(0, 2)}/${d.slice(2)}`;
   return `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
+};
+
+export const formatCep = (v) => {
+  const d = onlyDigits(v).slice(0, 8);
+  if (d.length <= 5) return d;
+  return `${d.slice(0, 5)}-${d.slice(5)}`;
 };
 
 export const formatMoney = (value) =>

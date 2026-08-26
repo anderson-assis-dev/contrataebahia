@@ -29,11 +29,11 @@ export default function Login() {
         navigate(location.state?.from || '/app', { replace: true });
         return;
       }
+      if (json?.requiresActivation) setNeedsActivation(true);
       setError(json?.message || 'Não foi possível entrar.');
     } catch (err) {
-      const message = apiError(err, 'Não foi possível entrar.');
-      setError(message);
-      if (/ativ/i.test(message)) setNeedsActivation(true);
+      if (err?.response?.data?.requiresActivation) setNeedsActivation(true);
+      setError(apiError(err, 'Não foi possível entrar.'));
     } finally {
       setSubmitting(false);
     }

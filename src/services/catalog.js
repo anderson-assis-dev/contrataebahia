@@ -6,8 +6,10 @@ export const listCategories = async (limit) => {
   return data;
 };
 
-export const searchProviders = async (params) => {
-  const { data } = await http.get('/services/search-providers', { params });
+export const searchProviders = async ({ category, city, limit } = {}) => {
+  const { data } = await http.get('/providers/search', {
+    params: { q: category || undefined, city: city || undefined, limit: limit || 24 },
+  });
   return data;
 };
 

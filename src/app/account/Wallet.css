@@ -1,0 +1,60 @@
+.wal-balance {
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  background: var(--grad-blue);
+  border-radius: var(--radius-lg);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+
+.wal-balance span {
+  display: block;
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.wal-balance strong {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.wal-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-xs);
+}
+
+.wal-card > svg {
+  color: var(--blue);
+  flex-shrink: 0;
+}
+
+.wal-card div {
+  flex: 1;
+  min-width: 0;
+}
+
+.wal-card strong {
+  display: block;
+  font-size: 0.94rem;
+}
+
+.wal-card span {
+  font-size: 0.78rem;
+  color: var(--muted2);
+}
+
+.wal-card-el {
+  padding: 14px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}

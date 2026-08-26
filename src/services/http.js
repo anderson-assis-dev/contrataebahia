@@ -58,7 +58,10 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const path = String(error.config?.url || '');
+    const isAuthAttempt = /\/(auth\/)?(login|register|verify-activation|resend-activation)$/.test(path);
+    if (status === 401 && !isAuthAttempt) {
       clearSession();
       window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
     }
@@ -70,9 +73,22 @@ export const apiError = (error, fallback = 'Não foi possível concluir. Tente n
   const data = error?.response?.data;
   if (data?.errors) {
     const first = Object.values(data.errors).flat()[0];
-    if (first) return String(first);
+    if (typeof first === 'string' && first) return first;
+    if (first?.msg) return String(first.msg);
+    if (first?.message) return String(first.message);
   }
   return data?.message || error?.message || fallback;
+};
+
+export const registerError = (error, hasCpf) => {
+  const data = error?.response?.data;
+  const status = error?.response?.status;
+  const message = data?.message;
+  if (message && message !== 'Erro interno do servidor') return message;
+  if (hasCpf && (status === 500 || message === 'Erro interno do servidor')) {
+    return 'Este CPF já está cadastrado em outra conta. Deixe o campo em branco ou entre na conta existente.';
+  }
+  return apiError(error, 'Não foi possível criar a conta.');
 };
 
 export const upload = async (path, formData, method = 'post') => {

@@ -10,7 +10,7 @@ export default function OrderCard({ order, to, footer }) {
   const city = order.city || order.neighborhood;
 
   return (
-    <Link to={to} className="order-card">
+    <Link to={to} state={{ order }} className="order-card">
       <div className="order-card-top">
         <h3>{order.title}</h3>
         <span className={`badge badge-${order.status}`}>{ORDER_STATUS_LABEL[order.status] || order.status}</span>

@@ -8,7 +8,7 @@ import './ProviderRegister.css';
 import './RegisterModal.css';
 import { apiGet, apiPost, REF_STORAGE_KEY } from '../utils/api';
 import { STATIC_CATEGORIES } from '../data/categories';
-import { formatPhone, formatCpfCnpj, formatDate, parseDateToISO, onlyDigits } from '../utils/format';
+import { formatPhone, formatCpfCnpj, formatDate, parseDateToISO, onlyDigits, normalizePhone } from '../utils/format';
 import { BRAND_NAME } from '../utils/brand';
 
 const HIGHLIGHTS = [
@@ -179,23 +179,26 @@ function RegisterModal({ open, onClose, initialEmail }) {
     }
     setSubmitting(true);
     try {
+      const cpf = onlyDigits(form.cpf) || undefined;
       const json = await apiPost('/api/auth/register', {
         name: form.name,
         email: form.email,
-        phone: onlyDigits(form.phone),
+        phone: normalizePhone(form.phone),
         password: form.password,
         password_confirmation: form.confirmPassword,
         profile_type: 'provider',
-        cpf: onlyDigits(form.cpf) || undefined,
+        cpf,
         mother_name: form.mother_name,
         birth_date: parseDateToISO(form.birth_date),
-        service_categories: selectedCats.length ? JSON.stringify(selectedCats) : undefined,
+        service_categories: selectedCats.length ? selectedCats : undefined,
         ref_code: localStorage.getItem(REF_STORAGE_KEY) || undefined,
       });
       if (json.success) {
         setResult({ ok: true, msg: json.message || 'Cadastro realizado com sucesso!' });
         setForm(EMPTY_FORM);
         setSelectedCats([]);
+      } else if (cpf && json.message === 'Erro interno do servidor') {
+        setResult({ ok: false, msg: 'Este CPF já está cadastrado em outra conta. Deixe o campo em branco ou entre na conta existente.' });
       } else {
         setResult({ ok: false, msg: json.message || 'Erro ao criar conta. Tente novamente.' });
       }

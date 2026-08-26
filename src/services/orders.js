@@ -76,6 +76,36 @@ export const getOrder = async (id) => {
   return data;
 };
 
+const collectOrders = (json) => json?.data?.data || (Array.isArray(json?.data) ? json.data : []);
+
+export const resolveOrder = async (id, hint) => {
+  try {
+    const json = await getOrder(id);
+    if (json?.success && json.data) return json;
+  } catch (err) {
+    if (err?.response?.status !== 403 && err?.response?.status !== 404) throw err;
+  }
+
+  if (hint && String(hint.id) === String(id)) {
+    return { success: true, data: hint };
+  }
+
+  const [available, mine, proposalsJson] = await Promise.all([
+    listAvailableOrders({ limit: 100 }).catch(() => null),
+    listOrders({ limit: 100 }).catch(() => null),
+    http.get('/proposals', { params: { limit: 100 } }).then((res) => res.data).catch(() => null),
+  ]);
+  const found = [...collectOrders(available), ...collectOrders(mine)].find(
+    (order) => String(order.id) === String(id)
+  );
+  if (found) return { success: true, data: found };
+  const nested = collectOrders(proposalsJson)
+    .map((item) => item.order)
+    .find((order) => order && String(order.id) === String(id));
+  if (nested) return { success: true, data: nested };
+  return { success: false, message: 'Acesso negado' };
+};
+
 export const createOrder = (payload) => upload('/orders', buildOrderForm(payload));
 
 export const updateOrder = (id, payload) => upload(`/orders/${id}`, buildOrderForm(payload), 'put');

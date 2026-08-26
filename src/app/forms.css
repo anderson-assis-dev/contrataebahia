@@ -311,3 +311,9 @@
     grid-template-columns: 1fr;
   }
 }
+
+.od-danger:hover:not(:disabled) {
+  border-color: var(--red-100);
+  background: var(--red-50);
+  color: var(--red);
+}

@@ -1,13 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ClipboardList, BriefcaseBusiness } from 'lucide-react';
 import './DualCTA.css';
-import ClientRegisterModal from './ClientRegister';
 
 function DualCTA() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const closeModal = useCallback(() => setModalOpen(false), []);
-
   return (
     <section className="dual-cta" id="prestadores">
       <div className="dual-cta-grid">
@@ -20,9 +16,9 @@ function DualCTA() {
             Faça seu pedido gratuitamente e receba orçamentos de profissionais
             qualificados da sua região.
           </p>
-          <button type="button" className="dual-cta-btn" onClick={() => setModalOpen(true)}>
+          <Link to="/criar-conta" className="dual-cta-btn">
             Solicitar serviço <ArrowRight size={16} />
-          </button>
+          </Link>
         </div>
 
         <div className="dual-cta-card provider reveal">
@@ -39,8 +35,6 @@ function DualCTA() {
           </Link>
         </div>
       </div>
-
-      {modalOpen && <ClientRegisterModal open={modalOpen} onClose={closeModal} />}
     </section>
   );
 }

@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Hammer, UserRound } from 'lucide-react';
 import AuthShell from './AuthShell';
 import { useAuth } from '../../contexts/AuthContext';
-import { apiError } from '../../services/http';
+import { registerError } from '../../services/http';
+import { listCategories } from '../../services/catalog';
 import { REF_STORAGE_KEY } from '../../utils/api';
-import { formatCpf, formatPhone, onlyDigits } from '../../utils/format';
+import { STATIC_CATEGORIES } from '../../data/categories';
+import { formatCpf, formatDate, formatPhone, normalizePhone, onlyDigits, parseDateToISO } from '../../utils/format';
 import '../forms.css';
+import '../ui.css';
 
 const PROFILES = [
   {
@@ -23,7 +26,18 @@ const PROFILES = [
   },
 ];
 
-const EMPTY = { name: '', email: '', phone: '', cpf: '', password: '', confirm: '' };
+const EMPTY = {
+  name: '',
+  email: '',
+  phone: '',
+  cpf: '',
+  password: '',
+  confirm: '',
+  mother_name: '',
+  birth_date: '',
+};
+
+const FALLBACK_LABELS = STATIC_CATEGORIES.map((c) => c.label);
 
 export default function Register() {
   const { signUp } = useAuth();
@@ -31,17 +45,40 @@ export default function Register() {
   const [params] = useSearchParams();
   const [profileType, setProfileType] = useState(params.get('perfil') === 'prestador' ? 'provider' : 'client');
   const [form, setForm] = useState(EMPTY);
+  const [categories, setCategories] = useState(FALLBACK_LABELS);
+  const [selectedCats, setSelectedCats] = useState([]);
   const [showPass, setShowPass] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  const isProvider = profileType === 'provider';
+
+  useEffect(() => {
+    if (!isProvider) return undefined;
+    let active = true;
+    listCategories(60)
+      .then((json) => {
+        if (!active) return;
+        const labels = (json?.data || []).map((c) => c.label).filter(Boolean);
+        if (labels.length) setCategories(labels);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [isProvider]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') return setForm((f) => ({ ...f, phone: formatPhone(value) }));
     if (name === 'cpf') return setForm((f) => ({ ...f, cpf: formatCpf(value) }));
+    if (name === 'birth_date') return setForm((f) => ({ ...f, birth_date: formatDate(value) }));
     return setForm((f) => ({ ...f, [name]: value }));
   };
+
+  const toggleCat = (label) =>
+    setSelectedCats((list) => (list.includes(label) ? list.filter((l) => l !== label) : [...list, label]));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,17 +87,38 @@ export default function Register() {
       setError('As senhas não coincidem.');
       return;
     }
+    if (isProvider) {
+      if (!form.mother_name.trim()) {
+        setError('Informe o nome da sua mãe. É exigido no cadastro de prestador.');
+        return;
+      }
+      if (form.birth_date.length !== 10) {
+        setError('Informe sua data de nascimento completa.');
+        return;
+      }
+      if (selectedCats.length === 0) {
+        setError('Escolha pelo menos uma categoria de serviço.');
+        return;
+      }
+    }
     setSubmitting(true);
     try {
       const json = await signUp({
         name: form.name.trim(),
         email: form.email.trim(),
-        phone: onlyDigits(form.phone),
+        phone: normalizePhone(form.phone),
         password: form.password,
         password_confirmation: form.confirm,
         profile_type: profileType,
         cpf: onlyDigits(form.cpf) || undefined,
         ref_code: localStorage.getItem(REF_STORAGE_KEY) || undefined,
+        ...(isProvider
+          ? {
+              mother_name: form.mother_name.trim(),
+              birth_date: parseDateToISO(form.birth_date),
+              service_categories: selectedCats,
+            }
+          : {}),
       });
       if (json?.success) {
         navigate(`/ativar-conta?email=${encodeURIComponent(form.email.trim())}`, { replace: true });
@@ -68,7 +126,7 @@ export default function Register() {
       }
       setError(json?.message || 'Não foi possível criar a conta.');
     } catch (err) {
-      setError(apiError(err, 'Não foi possível criar a conta.'));
+      setError(registerError(err, Boolean(onlyDigits(form.cpf))));
     } finally {
       setSubmitting(false);
     }
@@ -170,6 +228,7 @@ export default function Register() {
               value={form.cpf}
               onChange={handleChange}
             />
+            <span className="f-hint">Se este CPF já tiver conta, o cadastro não conclui. Nesse caso, deixe em branco.</span>
           </div>
         </div>
 
@@ -214,6 +273,59 @@ export default function Register() {
             required
           />
         </div>
+
+        {isProvider && (
+          <>
+            <div className="f-grid f-grid-2">
+              <div className="f-field">
+                <label htmlFor="reg-mother">Nome da mãe</label>
+                <input
+                  id="reg-mother"
+                  className="f-input"
+                  name="mother_name"
+                  placeholder="Nome completo da sua mãe"
+                  value={form.mother_name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="f-field">
+                <label htmlFor="reg-birth">Data de nascimento</label>
+                <input
+                  id="reg-birth"
+                  className="f-input"
+                  name="birth_date"
+                  inputMode="numeric"
+                  placeholder="dd/mm/aaaa"
+                  value={form.birth_date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="f-field">
+              <label htmlFor="reg-cats">O que você faz</label>
+              <div className="chips" id="reg-cats">
+                {categories.map((label) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className={`chip ${selectedCats.includes(label) ? 'chip-on' : ''}`}
+                    onClick={() => toggleCat(label)}
+                    aria-pressed={selectedCats.includes(label)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <span className="f-hint">
+                Você receberá demandas dessas categorias. Pode ajustar depois no seu perfil.
+              </span>
+            </div>
+          </>
+        )}
 
         <label className="f-check">
           <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} required />

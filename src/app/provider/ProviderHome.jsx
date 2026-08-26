@@ -60,6 +60,12 @@ export default function ProviderHome() {
         ]}
       />
 
+      <p style={{ margin: '-6px 0 18px' }}>
+        <Link to="/app/visibilidade" className="ch-section-link">
+          Ver painel profissional
+        </Link>
+      </p>
+
       <section className="ch-section">
         <div className="ch-section-head">
           <h2 className="card-title">Demandas para você</h2>
