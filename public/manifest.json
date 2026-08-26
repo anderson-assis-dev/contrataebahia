@@ -1,0 +1,27 @@
+{
+  "short_name": "Contrataê Bahia",
+  "name": "Contrataê Bahia — Oportunidades para quem faz acontecer",
+  "description": "Encontre profissionais e serviços de confiança na Bahia.",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/contrataebahia-symbol-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/contrataebahia-symbol.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#123FAE",
+  "background_color": "#FFFFFF"
+}

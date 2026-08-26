@@ -1,0 +1,63 @@
+.ch-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 17px 18px;
+  border-radius: var(--radius-lg);
+  background: var(--grad-blue);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: var(--shadow-blue);
+  transition: transform 0.15s;
+}
+
+.ch-cta:hover {
+  transform: translateY(-2px);
+}
+
+.ch-cta-ico {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.ch-cta-txt strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.ch-cta-txt span {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ch-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.ch-section-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.ch-section-link:hover {
+  text-decoration: underline;
+}
+
+.ch-skel {
+  height: 104px;
+}

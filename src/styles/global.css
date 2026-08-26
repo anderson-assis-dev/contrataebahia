@@ -1,0 +1,200 @@
+:root {
+  --blue-900: #071C4D;
+  --blue-800: #0B2A75;
+  --blue-700: #0E3494;
+  --blue: #123FAE;
+  --blue-600: #2A57C4;
+  --blue-500: #4A74D8;
+  --blue-300: #93A9E8;
+  --blue-100: #DCE4F8;
+  --blue-50: #EEF3FD;
+
+  --red-700: #A81317;
+  --red-600: #C4181D;
+  --red: #E31E24;
+  --red-400: #EF5B60;
+  --red-100: #FBDCDD;
+  --red-50: #FEF2F2;
+
+  --white: #ffffff;
+  --bg: #F5F7FC;
+  --surface: #ffffff;
+  --border: #E3E8F2;
+  --border-strong: #CBD4E6;
+  --text: #101B33;
+  --text-soft: #33405C;
+  --muted: #5A6480;
+  --muted2: #8A93A9;
+
+  --grad-blue: linear-gradient(135deg, #123FAE 0%, #2A57C4 100%);
+  --grad-deep: linear-gradient(135deg, #071C4D 0%, #123FAE 100%);
+  --grad-red: linear-gradient(135deg, #E31E24 0%, #EF5B60 100%);
+
+  --shadow-xs: 0 1px 2px rgba(16, 27, 51, 0.06);
+  --shadow-sm: 0 2px 8px rgba(16, 27, 51, 0.06);
+  --shadow: 0 8px 24px rgba(16, 27, 51, 0.08);
+  --shadow-blue: 0 12px 32px rgba(18, 63, 174, 0.18);
+  --shadow-red: 0 12px 32px rgba(227, 30, 36, 0.18);
+
+  --radius-sm: 10px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --font-display: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.6px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--blue-300);
+  outline-offset: 2px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.s-eye {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+
+.s-eye::before {
+  content: '';
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--red);
+}
+
+.s-title {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+.s-sub {
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.7;
+}
+
+.text-red {
+  color: var(--red);
+}
+
+.text-blue {
+  color: var(--blue);
+}
+
+/* Botões da marca */
+.btn-primary,
+.btn-outline,
+.btn-red {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  padding: 14px 28px;
+  cursor: pointer;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-primary {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.btn-primary:hover {
+  background: var(--blue-700);
+  transform: translateY(-2px);
+}
+
+.btn-red {
+  background: var(--red);
+  color: #fff;
+  box-shadow: var(--shadow-red);
+}
+.btn-red:hover {
+  background: var(--red-600);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: #fff;
+  color: var(--blue);
+  border-color: var(--blue-100);
+}
+.btn-outline:hover {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+}
