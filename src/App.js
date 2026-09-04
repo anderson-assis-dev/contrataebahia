@@ -36,6 +36,7 @@ import MyServices from './app/provider/MyServices';
 import MyProposals from './app/provider/MyProposals';
 import AcceptedOrder from './app/order/AcceptedOrder';
 import { REF_STORAGE_KEY } from './utils/api';
+import SiteGate from './components/SiteGate';
 import './styles/global.css';
 
 function Home() {
@@ -106,6 +107,7 @@ function HashScroll() {
 
 function App() {
   return (
+    <SiteGate>
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
@@ -159,6 +161,7 @@ function App() {
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
+    </SiteGate>
   );
 }
 
