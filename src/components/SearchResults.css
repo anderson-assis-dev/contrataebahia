@@ -115,6 +115,96 @@
   margin-top: 4px;
 }
 
+/* Trilha de navegação */
+.sr-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.sr-crumbs a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.sr-crumbs a:hover {
+  text-decoration: underline;
+}
+
+.sr-crumbs > svg {
+  color: var(--muted2);
+  flex: none;
+}
+
+.sr-crumbs [aria-current='page'] {
+  color: var(--text-soft);
+  font-weight: 600;
+}
+
+/* Atalhos de categoria */
+.sr-cat-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sr-cat-nav::-webkit-scrollbar {
+  height: 6px;
+}
+
+.sr-cat-nav::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.sr-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.sr-cat-chip:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: var(--blue-50);
+}
+
+.sr-cat-chip-on {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.sr-cat-chip-on:hover {
+  background: var(--blue-700);
+  border-color: var(--blue-700);
+  color: #fff;
+}
+
+
+
 /* Filtro de cidade */
 .sr-city-filter {
   display: flex;

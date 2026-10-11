@@ -2,9 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Search, Star, ArrowLeft, X, Briefcase, CheckCircle2, Zap, MapPin, Loader2, SearchX,
+  ChevronRight,
 } from 'lucide-react';
 import './SearchResults.css';
 import { apiGet, API_ENABLED } from '../utils/api';
+import { STATIC_CATEGORIES } from '../data/categories';
+
+const FALLBACK_CATEGORIES = STATIC_CATEGORIES.map((c) => ({ label: c.label }));
 
 function Avatar({ provider }) {
   if (provider.avatar_base64) {
@@ -163,6 +167,7 @@ export default function SearchResults() {
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [providerDetails, setProviderDetails] = useState(null);
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
   const fetchProviders = useCallback(async (q, city) => {
     if (!API_ENABLED) {
@@ -186,6 +191,37 @@ export default function SearchResults() {
   useEffect(() => {
     fetchProviders(searchParams.get('q') || '', searchParams.get('city') || '');
   }, [searchParams, fetchProviders]);
+
+  // mantém o campo de busca igual ao que está na URL, inclusive ao clicar numa categoria
+  useEffect(() => {
+    setQuery(searchParams.get('q') || '');
+    setCityInput(searchParams.get('city') || '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const data = await apiGet('/api/providers/categories?limit=60');
+        if (!active || !Array.isArray(data) || data.length === 0) return;
+        // só o rótulo: o total de cada categoria vem de outro endpoint e não
+        // bate com o resultado da busca, que é por texto livre
+        setCategories(data.map((c) => ({ label: c.label })));
+      } catch {
+        // mantém a lista estática
+      }
+    })();
+    return () => { active = false; };
+  }, []);
+
+  const goToCategory = (label) => {
+    const next = {};
+    if (label) next.q = label;
+    const city = searchParams.get('city');
+    if (city) next.city = city;
+    setSearchParams(next);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -277,6 +313,47 @@ export default function SearchResults() {
       </div>
 
       <div className="sr-body">
+        <nav className="sr-crumbs" aria-label="Trilha de navegação">
+          <Link to="/">Início</Link>
+          <ChevronRight size={13} aria-hidden="true" />
+          {q ? (
+            <Link to="/buscar">Prestadores</Link>
+          ) : (
+            <span aria-current="page">Prestadores</span>
+          )}
+          {q && (
+            <>
+              <ChevronRight size={13} aria-hidden="true" />
+              <span aria-current="page">{q}</span>
+            </>
+          )}
+        </nav>
+
+        <div className="sr-cat-nav" role="group" aria-label="Filtrar por categoria">
+          <button
+            type="button"
+            className={`sr-cat-chip${q ? '' : ' sr-cat-chip-on'}`}
+            aria-pressed={!q}
+            onClick={() => goToCategory('')}
+          >
+            Todas
+          </button>
+          {categories.map((c) => {
+            const on = q.toLowerCase() === c.label.toLowerCase();
+            return (
+              <button
+                key={c.label}
+                type="button"
+                className={`sr-cat-chip${on ? ' sr-cat-chip-on' : ''}`}
+                aria-pressed={on}
+                onClick={() => goToCategory(c.label)}
+              >
+                {c.label}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="sr-meta">
           <h1 className="sr-meta-title">
             {q ? `Prestadores de "${q}"` : 'Todos os prestadores'}
