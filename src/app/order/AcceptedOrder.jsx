@@ -6,6 +6,7 @@ import {
   Ban,
   CalendarClock,
   CheckCircle2,
+  FileText,
   Info,
   MapPin,
   MessageSquare,
@@ -271,6 +272,18 @@ export default function AcceptedOrder() {
             )}
 
             {order.status === 'in_progress' && <SecurityCodePanel orderId={id} isClient={isClient} />}
+
+            {order.status === 'completed' && order.receipt_code && (
+              <a
+                className="f-ghost ao-receipt"
+                href={`/comprovante/${order.receipt_code}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FileText size={17} />
+                Ver comprovante do serviço
+              </a>
+            )}
 
             {order.status === 'completed' && isClient && order.provider_id && (
               <Link to={`/app/avaliar/${order.provider_id}?pedido=${id}`} className="f-submit">

@@ -11,6 +11,7 @@ import SearchResults from './components/SearchResults';
 import ProviderRegister from './components/ProviderRegister';
 import TermsOfUse from './components/TermsOfUse';
 import PrivacyPolicy from './components/PrivacyPolicy';
+import Receipt from './components/Receipt';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import AppLayout from './app/AppLayout';
@@ -122,6 +123,7 @@ function App() {
               <Route path="/privacidade" element={<PrivacyPolicy />} />
             </Route>
 
+            <Route path="/comprovante/:codigo" element={<Receipt />} />
             <Route path="/entrar" element={<Login />} />
             <Route path="/criar-conta" element={<Register />} />
             <Route path="/ativar-conta" element={<ActivateAccount />} />
