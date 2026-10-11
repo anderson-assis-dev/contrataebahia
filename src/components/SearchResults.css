@@ -115,6 +115,23 @@
   margin-top: 4px;
 }
 
+/* Selo de prestador verificado */
+.sr-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--blue-100);
+  color: var(--blue-800);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
 /* Trilha de navegação */
 .sr-crumbs {
   display: flex;

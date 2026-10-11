@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Search, Star, ArrowLeft, X, Briefcase, CheckCircle2, Zap, MapPin, Loader2, SearchX,
-  ChevronRight,
+  ChevronRight, BadgeCheck,
 } from 'lucide-react';
 import './SearchResults.css';
 import { apiGet, API_ENABLED } from '../utils/api';
@@ -31,7 +31,15 @@ function ProviderCard({ provider }) {
         <Avatar provider={provider} />
       </div>
       <div className="sr-card-body">
-        <div className="sr-name">{provider.name}</div>
+        <div className="sr-name">
+          {provider.name}
+          {Number(provider.is_verified) === 1 && (
+            <span className="sr-verified" title="Antecedentes e identidade verificados">
+              <BadgeCheck size={14} strokeWidth={2.4} aria-hidden="true" />
+              Verificado
+            </span>
+          )}
+        </div>
         {provider.address && <div className="sr-address">{provider.address}</div>}
         {cats.length > 0 && (
           <div className="sr-cats">
