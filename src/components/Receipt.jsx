@@ -21,6 +21,15 @@ const moeda = (v) => (v == null ? null : Number(v).toLocaleString('pt-BR', {
   style: 'currency', currency: 'BRL',
 }));
 
+// O endereço sai do próprio domínio em que a página está aberta, para que cada
+// site mostre o seu e nenhuma cópia fique apontando para a marca errada.
+const enderecoDeConferencia = (codigo) => {
+  const host = typeof window !== 'undefined' && window.location
+    ? window.location.host
+    : '';
+  return `${host}/comprovante/${codigo}`;
+};
+
 function Linha({ rotulo, valor }) {
   if (!valor) return null;
   return (
@@ -145,7 +154,7 @@ export default function Receipt() {
           <CalendarCheck size={14} aria-hidden="true" />
           <span>
             Emitido em {dataHora(dados.emitido_em)} por {BRAND_NAME}. Confira a
-            autenticidade em contrataebahia.com.br/comprovante/{dados.codigo}
+            autenticidade em {enderecoDeConferencia(dados.codigo)}
           </span>
         </footer>
       </div>
