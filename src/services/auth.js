@@ -1,12 +1,16 @@
 import http from './http';
 
+// Sem isso o backend registra "plataforma NÃO INFORMADA" e trata quem entra
+// pela web como se fosse celular sem token.
+const PLATAFORMA = 'web';
+
 export const register = async (payload) => {
-  const { data } = await http.post('/auth/register', payload);
+  const { data } = await http.post('/auth/register', { ...payload, device_platform: PLATAFORMA });
   return data;
 };
 
 export const login = async (email, password) => {
-  const { data } = await http.post('/auth/login', { email, password });
+  const { data } = await http.post('/auth/login', { email, password, device_platform: PLATAFORMA });
   return data;
 };
 
