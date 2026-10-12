@@ -8,6 +8,7 @@ import { apiError } from '../../services/http';
 import FullPageLoader from '../FullPageLoader';
 import { STATIC_CATEGORIES } from '../../data/categories';
 import SearchSelect from '../../components/SearchSelect';
+import AssistantBubble from '../../components/AssistantBubble';
 import { formatCep, formatMoney, onlyDigits } from '../../utils/format';
 import '../forms.css';
 import '../ui.css';
@@ -466,6 +467,13 @@ export default function CreateOrder() {
           {submitting ? 'Salvando...' : editing ? 'Salvar alterações' : 'Publicar pedido'}
         </button>
       </form>
+
+      <AssistantBubble
+        titulo={form.title}
+        categoria={form.category}
+        descricao={form.description}
+        onAplicar={(texto) => setForm((f) => ({ ...f, description: texto }))}
+      />
     </>
   );
 }

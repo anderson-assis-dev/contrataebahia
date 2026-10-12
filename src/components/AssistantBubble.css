@@ -1,0 +1,285 @@
+/* Balão fixo no canto inferior direito. O nome fica sempre visível ao lado da
+   marca, para a pessoa saber quem está falando antes de clicar. */
+.ab-balao {
+  position: fixed;
+  right: 20px;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px 9px 9px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--grad-blue);
+  box-shadow: var(--shadow-blue);
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.ab-balao:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(18, 63, 174, 0.28);
+}
+
+.ab-balao:focus-visible {
+  outline: 3px solid var(--blue-300);
+  outline-offset: 3px;
+}
+
+.ab-marca {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.ab-marca img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.ab-brilho {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  padding: 2px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+}
+
+.ab-nome {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+
+.ab-painel {
+  position: fixed;
+  right: 20px;
+  bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+  z-index: 61;
+  width: min(380px, calc(100vw - 40px));
+  max-height: min(70vh, 560px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.ab-topo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px;
+  background: var(--grad-blue);
+  color: #fff;
+}
+
+.ab-topo img {
+  width: 34px;
+  height: 34px;
+  padding: 5px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ab-topo div {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ab-topo strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.ab-topo span {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.ab-topo button {
+  border: 0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.ab-topo button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.ab-corpo {
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ab-bloco h3 {
+  margin: 0 0 8px 0;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+
+.ab-sugestao {
+  margin: 0;
+  padding: 12px 13px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--blue);
+  background: var(--blue-50);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.ab-dica,
+.ab-aviso {
+  margin: 8px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.ab-aviso {
+  margin: 0;
+}
+
+.ab-erro {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--red-50);
+  color: var(--red-700);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.ab-pronto {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--blue-50);
+  color: var(--blue-700);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.ab-aplicar {
+  margin-top: 11px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 14px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--blue);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ab-aplicar:disabled {
+  background: var(--border-strong);
+  color: var(--muted);
+  cursor: default;
+}
+
+.ab-perguntas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.ab-perguntas li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 13px;
+  border-left: 2px solid var(--border-strong);
+}
+
+.ab-perguntas strong {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.ab-perguntas span {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.ab-refazer {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (max-width: 560px) {
+  .ab-balao {
+    right: 14px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .ab-painel {
+    right: 14px;
+    left: 14px;
+    width: auto;
+    bottom: calc(138px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-balao {
+    transition: none;
+  }
+
+  .ab-balao:hover {
+    transform: none;
+  }
+}
