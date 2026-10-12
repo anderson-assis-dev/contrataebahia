@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertCircle, MapPin, Navigation, Radio, Square } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
-import { connectTracking, getMapToken } from '../../services/tracking';
+import { connectTracking } from '../../services/tracking';
 import TrackingMap from './TrackingMap';
 import '../forms.css';
 import '../ui.css';
@@ -32,7 +32,6 @@ export default function TrackingPanel({ order, isClient }) {
   const [starting, setStarting] = useState(false);
   const [providerPos, setProviderPos] = useState(null);
   const [route, setRoute] = useState({ polyline: null, distance: null, duration: null });
-  const [token, setToken] = useState('');
   const [notice, setNotice] = useState('');
 
   const destination =
@@ -57,12 +56,6 @@ export default function TrackingPanel({ order, isClient }) {
       navigator.geolocation.clearWatch(watchRef.current);
       watchRef.current = null;
     }
-  }, []);
-
-  useEffect(() => {
-    getMapToken()
-      .then((json) => setToken(json?.data?.token || ''))
-      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -196,7 +189,6 @@ export default function TrackingPanel({ order, isClient }) {
 
       {live && providerPos && (
         <TrackingMap
-          token={token}
           provider={providerPos}
           destination={destination}
           polyline={route.polyline}

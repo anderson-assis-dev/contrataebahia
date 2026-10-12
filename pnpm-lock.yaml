@@ -23,6 +23,9 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.2.1
+      leaflet:
+        specifier: 1.9.4
+        version: 1.9.4
       lucide-react:
         specifier: ^0.577.0
         version: 0.577.0(react@18.3.1)
@@ -3471,6 +3474,9 @@ packages:
 
   launch-editor@2.14.1:
     resolution: {integrity: sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==}
+
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
@@ -9984,6 +9990,8 @@ snapshots:
     dependencies:
       picocolors: 1.1.1
       shell-quote: 1.10.0
+
+  leaflet@1.9.4: {}
 
   leven@3.1.0: {}
 
