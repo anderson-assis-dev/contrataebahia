@@ -26,6 +26,7 @@ export default function TrackingPanel({ order, isClient }) {
   const socketRef = useRef(null);
   const watchRef = useRef(null);
   const pendingStartRef = useRef(null);
+  const startTimerRef = useRef(null);
   const [connected, setConnected] = useState(false);
   const [live, setLive] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -39,8 +40,22 @@ export default function TrackingPanel({ order, isClient }) {
       ? { lat: Number(order.latitude), lng: Number(order.longitude) }
       : null;
 
+  // Quanto esperamos pela confirmação do servidor antes de devolver o botão.
+  // Sem esse limite, qualquer tropeço no caminho deixa "Iniciando..." preso e a
+  // única saída é recarregar a página: o navegador não chama retorno nenhum
+  // quando o aviso de localização é dispensado em vez de respondido.
+  const ESPERA_DO_INICIO = 20000;
+
+  const cancelarEspera = useCallback(() => {
+    if (startTimerRef.current) {
+      clearTimeout(startTimerRef.current);
+      startTimerRef.current = null;
+    }
+  }, []);
+
   const applyPayload = useCallback((payload) => {
     if (payload?.provider_lat == null || payload?.provider_lng == null) return;
+    cancelarEspera();
     setProviderPos({ lat: Number(payload.provider_lat), lng: Number(payload.provider_lng) });
     setRoute({
       polyline: payload.polyline || null,
@@ -49,7 +64,7 @@ export default function TrackingPanel({ order, isClient }) {
     });
     setLive(true);
     setStarting(false);
-  }, []);
+  }, [cancelarEspera]);
 
   const stopWatch = useCallback(() => {
     if (watchRef.current != null) {
@@ -86,12 +101,14 @@ export default function TrackingPanel({ order, isClient }) {
     });
     socket.on('location-update', applyPayload);
     socket.on('tracking-stopped', () => {
+      cancelarEspera();
       setLive(false);
       setSharing(false);
       setStarting(false);
       pendingStartRef.current = null;
     });
     socket.on('tracking-error', (payload) => {
+      cancelarEspera();
       pendingStartRef.current = null;
       setStarting(false);
       setSharing(false);
@@ -105,12 +122,13 @@ export default function TrackingPanel({ order, isClient }) {
     });
 
     return () => {
+      cancelarEspera();
       stopWatch();
       pendingStartRef.current = null;
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [order.id, applyPayload, isClient, stopWatch]);
+  }, [order.id, applyPayload, isClient, stopWatch, cancelarEspera]);
 
   const startSharing = () => {
     if (!navigator.geolocation) {
@@ -119,14 +137,31 @@ export default function TrackingPanel({ order, isClient }) {
     }
     setNotice('');
     setStarting(true);
+
+    cancelarEspera();
+    startTimerRef.current = setTimeout(() => {
+      startTimerRef.current = null;
+      pendingStartRef.current = null;
+      stopWatch();
+      setStarting(false);
+      setNotice('Não conseguimos iniciar o trajeto. Verifique se o navegador liberou a sua localização e tente de novo.');
+    }, ESPERA_DO_INICIO);
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
         pendingStartRef.current = coords;
         const socket = socketRef.current;
-        if (socket?.connected) {
-          socket.emit('join-order', Number(order.id));
+        if (!socket?.connected) {
+          // Antes isso não fazia nada e o botão ficava girando sem motivo
+          // aparente.
+          cancelarEspera();
+          pendingStartRef.current = null;
+          setStarting(false);
+          setNotice('Sem conexão com o servidor no momento. Tente de novo em instantes.');
+          return;
         }
+        socket.emit('join-order', Number(order.id));
         watchRef.current = navigator.geolocation.watchPosition(
           (next) =>
             socketRef.current?.emit('location-update', {
@@ -138,6 +173,7 @@ export default function TrackingPanel({ order, isClient }) {
         );
       },
       () => {
+        cancelarEspera();
         setStarting(false);
         toast.error('Precisamos da sua localização para iniciar o trajeto. Autorize no navegador.');
       },
@@ -146,6 +182,7 @@ export default function TrackingPanel({ order, isClient }) {
   };
 
   const stopSharing = () => {
+    cancelarEspera();
     stopWatch();
     pendingStartRef.current = null;
     socketRef.current?.emit('stop-tracking');
