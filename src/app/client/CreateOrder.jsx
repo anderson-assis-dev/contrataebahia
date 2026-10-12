@@ -7,6 +7,7 @@ import { listCategories, lookupCep } from '../../services/catalog';
 import { apiError } from '../../services/http';
 import FullPageLoader from '../FullPageLoader';
 import { STATIC_CATEGORIES } from '../../data/categories';
+import SearchSelect from '../../components/SearchSelect';
 import { formatCep, formatMoney, onlyDigits } from '../../utils/format';
 import '../forms.css';
 import '../ui.css';
@@ -255,14 +256,17 @@ export default function CreateOrder() {
 
           <div className="f-field">
             <label htmlFor="co-category">Categoria</label>
-            <select id="co-category" className="f-select" name="category" value={form.category} onChange={handleChange} required>
-              <option value="">Selecione uma categoria</option>
-              {categories.map((label) => (
-                <option key={label} value={label}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <SearchSelect
+              id="co-category"
+              name="category"
+              value={form.category}
+              options={categories}
+              onChange={handleChange}
+              placeholder="Selecione uma categoria"
+              searchPlaceholder="Buscar categoria..."
+              emptyLabel="Nenhuma categoria com esse nome"
+              required
+            />
           </div>
 
           <div className="f-field">
