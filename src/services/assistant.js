@@ -21,3 +21,15 @@ export const reviewOrderDraft = async ({ titulo, categoria, descricao }) => {
   });
   return data?.data || null;
 };
+
+/**
+ * Pede à BIA a leitura de uma demanda, do ponto de vista de quem vai propor.
+ *
+ * Volta sempre com `dados` (números calculados no servidor) e, quando a IA
+ * está ligada e respondeu, com `analise`. A tela precisa aguentar `analise`
+ * nula: os números sozinhos já ajudam.
+ */
+export const coachProposal = async (orderId) => {
+  const { data } = await http.post(`/orders/${orderId}/assistant/proposal-coach`);
+  return data?.data || null;
+};

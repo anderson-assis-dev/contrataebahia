@@ -7,6 +7,7 @@ import { ORDER_STATUS_LABEL, resolveOrder } from '../../services/orders';
 import { createProposal, listProposals, updateProposal, withdrawProposal } from '../../services/proposals';
 import { apiError } from '../../services/http';
 import Attachments from '../components/Attachments';
+import ProposalCoach from './ProposalCoach';
 import FullPageLoader from '../FullPageLoader';
 import { formatDateTimeBR, formatMoney, onlyDigits } from '../../utils/format';
 import '../ui.css';
@@ -192,6 +193,14 @@ export default function DemandDetail() {
 
       <div className="od-grid">
         <div className="stack">
+          {!closed && !acceptedByMe && (
+            <ProposalCoach
+              orderId={id}
+              onUsarTexto={(texto) => setDescription(texto)}
+              onUsarValor={(valor) => setPrice(String(Math.round(Number(valor) * 100)))}
+            />
+          )}
+
           <div className="card">
             <div className="card-title">O que o cliente precisa</div>
             <p className="od-desc">{order.description}</p>
