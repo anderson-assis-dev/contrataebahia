@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, FileText, Tag } from 'lucide-react';
+import { CalendarClock, Clock, FileText, MapPin } from 'lucide-react';
 import { PROPOSAL_STATUS_LABEL, listProposals } from '../../services/proposals';
-import { formatMoney, timeAgo } from '../../utils/format';
+import CardThumb from '../components/CardThumb';
+import { postedLabel } from '../components/OrderCard';
+import { formatMoney } from '../../utils/format';
 import '../ui.css';
-import './MyProposals.css';
+import '../components/ListCard.css';
 
 const FILTERS = [
   { value: '', label: 'Todas' },
@@ -18,6 +20,12 @@ const STATUS_CLASS = {
   accepted: 'badge-completed',
   rejected: 'badge-cancelled',
   withdrawn: 'badge-stopped',
+};
+
+const deadlineLabel = (deadline) => {
+  if (!deadline) return '';
+  if (!/^\d+$/.test(String(deadline))) return String(deadline);
+  return Number(deadline) === 1 ? '1 dia' : `${deadline} dias`;
 };
 
 export default function MyProposals() {
@@ -65,9 +73,9 @@ export default function MyProposals() {
       </div>
 
       {loading ? (
-        <div className="stack">
-          <div className="skel" style={{ height: 92 }} />
-          <div className="skel" style={{ height: 92 }} />
+        <div className="lcard-grid">
+          <div className="skel lcard-skel" />
+          <div className="skel lcard-skel" />
         </div>
       ) : proposals.length === 0 ? (
         <div className="empty">
@@ -81,36 +89,52 @@ export default function MyProposals() {
           </Link>
         </div>
       ) : (
-        <div className="stack">
+        <div className="lcard-grid">
           {proposals.map((proposal) => {
             const order = proposal.order || {};
+            const city = order.city || order.neighborhood;
             const target =
               proposal.status === 'accepted'
                 ? `/app/servicos/${proposal.order_id}/andamento`
                 : `/app/demandas/${proposal.order_id}`;
             return (
-              <Link key={proposal.id} to={target} state={{ order }} className="myprop">
-                <div className="myprop-top">
-                  <h3>{order.title || `Pedido #${proposal.order_id}`}</h3>
-                  <span className={`badge ${STATUS_CLASS[proposal.status] || 'badge-stopped'}`}>
-                    {PROPOSAL_STATUS_LABEL[proposal.status] || proposal.status}
-                  </span>
-                </div>
-                <div className="meta">
-                  {order.category && (
-                    <span className="meta-item">
-                      <Tag size={14} />
-                      {order.category}
+              <Link key={proposal.id} to={target} state={{ order }} className="lcard">
+                <CardThumb attachments={order.attachments} category={order.category} />
+
+                <div className="lcard-body">
+                  <div className="lcard-head">
+                    <span className="lcard-eyebrow">{order.category || `Pedido #${proposal.order_id}`}</span>
+                    <span className={`badge ${STATUS_CLASS[proposal.status] || 'badge-stopped'}`}>
+                      {PROPOSAL_STATUS_LABEL[proposal.status] || proposal.status}
                     </span>
-                  )}
-                  <span className="meta-item myprop-price">{formatMoney(proposal.price)}</span>
-                  <span className="meta-item">
-                    {proposal.deadline} {/^\d+$/.test(String(proposal.deadline)) ? 'dias' : ''}
-                  </span>
-                  <span className="meta-item">
-                    <Clock size={14} />
-                    {timeAgo(proposal.created_at)}
-                  </span>
+                  </div>
+
+                  <h3 className="lcard-title">{order.title || `Pedido #${proposal.order_id}`}</h3>
+                  {proposal.description && <p className="lcard-desc">{proposal.description}</p>}
+
+                  <div className="lcard-price">
+                    <strong>{formatMoney(proposal.price)}</strong>
+                    <span>sua proposta</span>
+                  </div>
+
+                  <div className="lcard-foot">
+                    {city && (
+                      <span className="meta-item">
+                        <MapPin size={13} />
+                        {city}
+                      </span>
+                    )}
+                    {proposal.deadline && (
+                      <span className="meta-item">
+                        <CalendarClock size={13} />
+                        {deadlineLabel(proposal.deadline)}
+                      </span>
+                    )}
+                    <span className="meta-item">
+                      <Clock size={13} />
+                      {postedLabel(proposal.created_at)}
+                    </span>
+                  </div>
                 </div>
               </Link>
             );

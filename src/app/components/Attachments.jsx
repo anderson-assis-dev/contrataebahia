@@ -3,7 +3,7 @@ import { FileText, X } from 'lucide-react';
 import { API_URL } from '../../utils/api';
 import './Attachments.css';
 
-const resolveUrl = (item) => {
+export const attachmentUrl = (item) => {
   if (item.data) return item.data;
   const path = item.file_path || item.path;
   if (!path) return '';
@@ -11,7 +11,7 @@ const resolveUrl = (item) => {
   return `${API_URL}/${String(path).replace(/^\/+/, '')}`;
 };
 
-const isImage = (item) => {
+export const isImageAttachment = (item) => {
   const mime = item.mime_type || item.type || '';
   if (mime.startsWith('image/')) return true;
   return typeof item.data === 'string' && item.data.startsWith('data:image');
@@ -26,9 +26,9 @@ export default function Attachments({ items }) {
     <>
       <div className="att-grid">
         {list.map((item, index) => {
-          const url = resolveUrl(item);
+          const url = attachmentUrl(item);
           const name = item.original_name || item.filename || `Arquivo ${index + 1}`;
-          if (isImage(item) && url) {
+          if (isImageAttachment(item) && url) {
             return (
               <button
                 key={`${name}-${index}`}

@@ -75,9 +75,9 @@ export default function ProviderHome() {
         </div>
 
         {loading ? (
-          <div className="stack">
-            <div className="skel ch-skel" />
-            <div className="skel ch-skel" />
+          <div className="lcard-grid">
+            <div className="skel lcard-skel" />
+            <div className="skel lcard-skel" />
           </div>
         ) : demands.length === 0 ? (
           <div className="empty">
@@ -94,8 +94,8 @@ export default function ProviderHome() {
             </Link>
           </div>
         ) : (
-          <div className="stack">
-            {demands.slice(0, 5).map((order) => (
+          <div className="lcard-grid">
+            {demands.slice(0, 4).map((order) => (
               <OrderCard key={order.id} order={order} to={`/app/demandas/${order.id}`} />
             ))}
           </div>

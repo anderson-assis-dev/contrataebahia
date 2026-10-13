@@ -68,9 +68,9 @@ export default function ClientHome() {
         </div>
 
         {loading ? (
-          <div className="stack">
-            <div className="skel ch-skel" />
-            <div className="skel ch-skel" />
+          <div className="lcard-grid">
+            <div className="skel lcard-skel" />
+            <div className="skel lcard-skel" />
           </div>
         ) : orders.length === 0 ? (
           <div className="empty">
@@ -84,8 +84,8 @@ export default function ClientHome() {
             </Link>
           </div>
         ) : (
-          <div className="stack">
-            {orders.slice(0, 5).map((order) => (
+          <div className="lcard-grid">
+            {orders.slice(0, 4).map((order) => (
               <OrderCard key={order.id} order={order} to={`/app/pedidos/${order.id}`} />
             ))}
           </div>

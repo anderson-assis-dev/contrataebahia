@@ -1,0 +1,140 @@
+{
+  "orderId": "42",
+  "timeline": [
+    {
+      "t": 0.81,
+      "side": "cena",
+      "text": "abertura, duas sessões lado a lado"
+    },
+    {
+      "t": 5.86,
+      "side": "cliente",
+      "text": "sessão iniciada"
+    },
+    {
+      "t": 6.72,
+      "side": "prestador",
+      "text": "sessão iniciada"
+    },
+    {
+      "t": 7.92,
+      "side": "cena",
+      "text": "o cidadão publica o pedido"
+    },
+    {
+      "t": 15.76,
+      "side": "cliente",
+      "text": "descreve o serviço, categoria e orçamento de referência"
+    },
+    {
+      "t": 20.11,
+      "side": "cliente",
+      "text": "informa o endereço, preenchido pelo CEP"
+    },
+    {
+      "t": 23.22,
+      "side": "cliente",
+      "text": "pedido publicado, número 42"
+    },
+    {
+      "t": 25.02,
+      "side": "cena",
+      "text": "a demanda chega ao profissional"
+    },
+    {
+      "t": 28.89,
+      "side": "prestador",
+      "text": "recebe a demanda na sua categoria e região"
+    },
+    {
+      "t": 34.35,
+      "side": "cena",
+      "text": "o profissional envia a proposta"
+    },
+    {
+      "t": 41.72,
+      "side": "prestador",
+      "text": "proposta enviada com preço, prazo e escopo"
+    },
+    {
+      "t": 41.72,
+      "side": "cena",
+      "text": "o cidadão compara e aceita"
+    },
+    {
+      "t": 44.54,
+      "side": "cliente",
+      "text": "vê a proposta com preço, prazo e reputação"
+    },
+    {
+      "t": 50.3,
+      "side": "cliente",
+      "text": "aceita a proposta, o pedido sai do leilão"
+    },
+    {
+      "t": 52.5,
+      "side": "cena",
+      "text": "agendamento combinado entre as duas partes"
+    },
+    {
+      "t": 60.06,
+      "side": "prestador",
+      "text": "propõe data e hora para o serviço"
+    },
+    {
+      "t": 69.41,
+      "side": "cliente",
+      "text": "confirma o agendamento"
+    },
+    {
+      "t": 69.41,
+      "side": "cena",
+      "text": "o profissional inicia o trajeto"
+    },
+    {
+      "t": 72.1,
+      "side": "prestador",
+      "text": "inicia o trajeto e compartilha a posição"
+    },
+    {
+      "t": 87.42,
+      "side": "cliente",
+      "text": "acompanha o profissional a caminho, no mapa"
+    },
+    {
+      "t": 89.92,
+      "side": "cena",
+      "text": "chegada confirmada por código, com validação de proximidade"
+    },
+    {
+      "t": 102.87,
+      "side": "cliente",
+      "text": "informa o código do profissional e confirma a chegada"
+    },
+    {
+      "t": 102.87,
+      "side": "cena",
+      "text": "serviço concluído e avaliado"
+    },
+    {
+      "t": 106.88,
+      "side": "cliente",
+      "text": "marca o serviço como concluído"
+    },
+    {
+      "t": 113.82,
+      "side": "prestador",
+      "text": "linha do tempo fechada nos dois lados"
+    },
+    {
+      "t": 122.37,
+      "side": "cliente",
+      "text": "avalia o profissional, fechando o ciclo"
+    },
+    {
+      "t": 122.37,
+      "side": "cena",
+      "text": "fim do fluxo"
+    }
+  ]
+}

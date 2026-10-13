@@ -72,9 +72,9 @@ export default function MyServices() {
           </div>
 
           {loading ? (
-            <div className="stack">
-              <div className="skel" style={{ height: 104 }} />
-              <div className="skel" style={{ height: 104 }} />
+            <div className="lcard-grid">
+              <div className="skel lcard-skel" />
+              <div className="skel lcard-skel" />
             </div>
           ) : orders.length === 0 ? (
             <div className="empty">
@@ -89,7 +89,7 @@ export default function MyServices() {
               </Link>
             </div>
           ) : (
-            <div className="stack">
+            <div className="lcard-grid">
               {orders.map((order) => (
                 <OrderCard key={order.id} order={order} to={`/app/servicos/${order.id}/andamento`} />
               ))}

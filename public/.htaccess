@@ -1,12 +1,37 @@
+# ------------------------------------------------------------------
+# Contrataê Bahia — SPA (Create React App) em Apache / HostGator
+# Este arquivo precisa ficar na MESMA pasta do index.html (public_html).
+# Sem ele, qualquer URL que não seja um arquivo real (/app, /entrar...)
+# cai no 404 padrão da hospedagem em vez de abrir o React Router.
+# ------------------------------------------------------------------
+
+# Impede o Apache de adivinhar extensões (ex.: /app -> app.php)
 Options -MultiViews
-RewriteEngine On
-RewriteBase /
-RewriteCond %{HTTPS} !=on
-RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1) Força HTTPS (a segunda condição cobre proxy/CDN na frente do Apache)
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # 2) Arquivos e pastas que existem de verdade são servidos como estão
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 3) Todo o resto vai para o index.html e o React Router resolve a rota.
+  #    Destino relativo de propósito: funciona na raiz do domínio e também
+  #    se o site for movido para uma subpasta.
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Rede de segurança: se mod_rewrite estiver indisponível, ainda assim o app
+# carrega em vez de mostrar a página de erro da hospedagem.
+ErrorDocument 404 /index.html
+
 <IfModule mod_headers.c>
   <FilesMatch "\.(html)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
