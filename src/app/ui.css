@@ -132,7 +132,9 @@
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 
-.chip:hover {
+/* Só o chip apagado reage ao hover: no escolhido isso pintava o texto de azul
+   sobre fundo azul, e o rótulo sumia enquanto o mouse estava em cima. */
+.chip:not(.chip-on):hover {
   border-color: var(--blue-300);
   color: var(--blue);
 }
