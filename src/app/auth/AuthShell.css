@@ -1,72 +1,114 @@
 .auth-page {
+  --auth-aside-w: min(44vw, 560px);
   display: flex;
   min-height: 100vh;
   background: var(--bg);
 }
 
+/* A coluna estica com a página para o azul não acabar no meio do caminho. */
 .auth-aside {
+  position: relative;
   display: none;
-  flex-direction: column;
-  width: 42%;
-  max-width: 520px;
-  padding: 40px;
   background: var(--grad-deep);
   color: #fff;
+  overflow: hidden;
+}
+
+/* Clarão suave no canto, para a coluna não ser uma chapa de azul. */
+.auth-aside::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(760px 420px at 12% 6%, rgba(255, 255, 255, 0.13), transparent 62%),
+    radial-gradient(520px 380px at 96% 92%, rgba(227, 30, 36, 0.16), transparent 68%);
+  pointer-events: none;
+}
+
+.auth-aside-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 44px 44px 36px;
 }
 
 .auth-aside-brand {
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
-  margin-bottom: auto;
-  padding: 10px 14px;
+  padding: 9px 13px;
   background: #fff;
-  border-radius: 14px;
+  border-radius: 13px;
+  box-shadow: 0 8px 24px rgba(7, 28, 77, 0.28);
 }
 
 .auth-aside-brand img {
-  height: 52px;
+  height: 46px;
   width: auto;
   display: block;
 }
 
+/* Centraliza manchete e pilares no meio da janela, não no fim da página. */
+.auth-aside-body {
+  margin: auto 0;
+  padding: 32px 0;
+}
+
 .auth-aside h2 {
-  font-size: 1.9rem;
+  font-size: clamp(1.6rem, 2.2vw, 2.05rem);
   font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 26px;
+  line-height: 1.22;
+  margin-bottom: 28px;
+  max-width: 11em;
 }
 
 .auth-aside ul {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 15px;
+  max-width: 24em;
 }
 
 .auth-aside li {
   display: flex;
   align-items: flex-start;
-  gap: 11px;
-  font-size: 0.92rem;
+  gap: 12px;
+  font-size: 0.93rem;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.86);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .auth-aside li svg {
   flex-shrink: 0;
-  margin-top: 3px;
+  margin-top: 2px;
   color: #fff;
+  opacity: 0.9;
+}
+
+.auth-aside-foot {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .auth-panel {
   flex: 1;
   display: flex;
+  justify-content: center;
+  padding: 28px 20px 48px;
+}
+
+.auth-panel-inner {
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 18px;
-  padding: 30px 20px 44px;
+  width: 100%;
+  max-width: 510px;
+  margin: auto 0;
 }
 
 .auth-panel-brand {
@@ -74,15 +116,14 @@
 }
 
 .auth-panel-brand img {
-  height: 48px;
+  height: 46px;
   width: auto;
   display: block;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
-  padding: 28px 24px;
+  padding: 26px 22px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -90,7 +131,7 @@
 }
 
 .auth-card h1 {
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 800;
   margin-bottom: 6px;
 }
@@ -99,7 +140,7 @@
   color: var(--muted);
   font-size: 0.92rem;
   line-height: 1.6;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .auth-foot {
@@ -119,8 +160,23 @@
 }
 
 @media (min-width: 900px) {
+  /*
+   * A coluna é fixa, não sticky: o `overflow-x: hidden` do body transforma ele
+   * em contêiner de rolagem, e sticky preso ao topo simplesmente não ativa —
+   * o conteúdo rolava junto e a tela voltava a ser meia janela de azul vazio.
+   * Fixo não depende disso, e o painel abre espaço com a margem.
+   */
   .auth-aside {
-    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: block;
+    width: var(--auth-aside-w);
+  }
+
+  .auth-panel {
+    margin-left: var(--auth-aside-w);
   }
 
   .auth-panel-brand {
@@ -128,6 +184,12 @@
   }
 
   .auth-card {
-    padding: 34px 32px;
+    padding: 32px 30px;
+  }
+}
+
+@media (max-width: 420px) {
+  .auth-card {
+    padding: 22px 18px;
   }
 }
