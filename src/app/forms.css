@@ -306,9 +306,72 @@
   color: var(--muted);
 }
 
+/*
+ * Lista de categorias com teto. São mais de vinte opções: soltas no formulário
+ * elas empurravam o aceite dos termos e o botão de criar conta para três telas
+ * abaixo. Com altura fixa e busca em cima, o formulário para de crescer junto
+ * com o catálogo.
+ */
+.chips-box {
+  max-height: 196px;
+  overflow-y: auto;
+  padding: 11px;
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fbfcfe;
+  align-content: flex-start;
+}
+
+.chips-vazio {
+  padding: 6px 2px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.f-input-sm {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+/*
+ * Duas escolhas lado a lado, com o ícone acima do texto. Empilhadas e com o
+ * ícone ao lado, elas comiam meia tela antes do primeiro campo do formulário.
+ */
+.f-choices-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.f-choices-2 .f-choice {
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px;
+}
+
+.f-choices-2 .f-choice-ico {
+  width: 36px;
+  height: 36px;
+}
+
+.f-choices-2 .f-choice-txt span {
+  font-size: 0.8rem;
+}
+
 @media (max-width: 560px) {
   .f-grid-2 {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 400px) {
+  .f-choices-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .f-choices-2 .f-choice {
+    flex-direction: row;
+    align-items: center;
   }
 }
 
