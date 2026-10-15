@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { CalendarClock, Clock, FileText, MapPin } from 'lucide-react';
 import { PROPOSAL_STATUS_LABEL, listProposals } from '../../services/proposals';
 import CardThumb from '../components/CardThumb';
+import ListFilters, { SemResultado, useListFilters } from '../components/ListFilters';
 import { postedLabel } from '../components/OrderCard';
 import { formatMoney } from '../../utils/format';
 import '../ui.css';
@@ -28,15 +29,21 @@ const deadlineLabel = (deadline) => {
   return Number(deadline) === 1 ? '1 dia' : `${deadline} dias`;
 };
 
+// A proposta carrega o pedido junto: a busca cobre os dois.
+const TEXTOS = (p) => [p.order?.title, p.order?.category, p.order?.city, p.description];
+const DATA = (p) => p.created_at;
+const VALOR = (p) => p.price;
+
 export default function MyProposals() {
   const [status, setStatus] = useState('');
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const filtros = useListFilters(proposals, { textos: TEXTOS, data: DATA, valor: VALOR });
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    listProposals(status ? { status } : undefined)
+    listProposals({ ...(status ? { status } : {}), limit: 100 })
       .then((json) => {
         if (active) setProposals(json?.data?.data || []);
       })
@@ -72,6 +79,15 @@ export default function MyProposals() {
         ))}
       </div>
 
+      {proposals.length > 0 && (
+        <ListFilters
+          filtros={filtros}
+          placeholder="Buscar por pedido, categoria ou cidade"
+          rotulo="propostas"
+          comValor
+        />
+      )}
+
       {loading ? (
         <div className="lcard-grid">
           <div className="skel lcard-skel" />
@@ -88,9 +104,11 @@ export default function MyProposals() {
             Ver demandas
           </Link>
         </div>
+      ) : filtros.filtrados.length === 0 ? (
+        <SemResultado onLimpar={filtros.limpar} rotulo="propostas" />
       ) : (
         <div className="lcard-grid">
-          {proposals.map((proposal) => {
+          {filtros.filtrados.map((proposal) => {
             const order = proposal.order || {};
             const city = order.city || order.neighborhood;
             const target =

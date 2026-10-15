@@ -4,24 +4,29 @@ import { Briefcase, Search } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { listAvailableOrders } from '../../services/orders';
 import OrderCard from '../components/OrderCard';
+import ListFilters, { SemResultado, useListFilters } from '../components/ListFilters';
 import { formatCep, onlyDigits } from '../../utils/format';
 import '../forms.css';
 import '../ui.css';
+
+const TEXTOS = (o) => [o.title, o.description, o.category, o.city, o.neighborhood];
+const DATA = (o) => o.created_at;
+const VALOR = (o) => o.budget;
 
 export default function AvailableDemands() {
   const { user } = useAuth();
   const myCategories = user?.service_categories || [];
   const [category, setCategory] = useState('');
-  const [search, setSearch] = useState('');
   const [cep, setCep] = useState('');
   const [query, setQuery] = useState({});
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const filtros = useListFilters(orders, { textos: TEXTOS, data: DATA, valor: VALOR });
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    listAvailableOrders(Object.keys(query).length ? query : undefined)
+    listAvailableOrders({ ...query, limit: 100 })
       .then((json) => {
         if (active) setOrders(json?.data?.data || []);
       })
@@ -40,7 +45,6 @@ export default function AvailableDemands() {
     e.preventDefault();
     const next = {};
     if (category) next.category = category;
-    if (search.trim()) next.search = search.trim();
     if (onlyDigits(cep).length === 8) next.cep = onlyDigits(cep);
     setQuery(next);
   };
@@ -58,29 +62,17 @@ export default function AvailableDemands() {
       </div>
 
       <form className="card stack" onSubmit={applyFilters} style={{ marginBottom: 18 }}>
-        <div className="f-grid f-grid-2">
-          <div className="f-field">
-            <label htmlFor="ad-search">Buscar</label>
-            <input
-              id="ad-search"
-              className="f-input"
-              placeholder="Palavra-chave do pedido"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-
-          <div className="f-field">
-            <label htmlFor="ad-cep">CEP de referência</label>
-            <input
-              id="ad-cep"
-              className="f-input"
-              inputMode="numeric"
-              placeholder="00000-000"
-              value={cep}
-              onChange={(e) => setCep(formatCep(e.target.value))}
-            />
-          </div>
+        <div className="f-field">
+          <label htmlFor="ad-cep">CEP de referência</label>
+          <input
+            id="ad-cep"
+            className="f-input"
+            inputMode="numeric"
+            placeholder="00000-000"
+            value={cep}
+            onChange={(e) => setCep(formatCep(e.target.value))}
+          />
+          <span className="f-hint">Ordena as demandas pela distância até esse endereço.</span>
         </div>
 
         {myCategories.length > 0 && (
@@ -109,9 +101,18 @@ export default function AvailableDemands() {
 
         <button type="submit" className="f-ghost">
           <Search size={16} />
-          Aplicar filtros
+          Buscar na região
         </button>
       </form>
+
+      {orders.length > 0 && (
+        <ListFilters
+          filtros={filtros}
+          placeholder="Buscar por título, categoria ou cidade"
+          rotulo="demandas"
+          comValor
+        />
+      )}
 
       {loading ? (
         <div className="lcard-grid">
@@ -133,9 +134,11 @@ export default function AvailableDemands() {
             Ajustar categorias
           </Link>
         </div>
+      ) : filtros.filtrados.length === 0 ? (
+        <SemResultado onLimpar={filtros.limpar} rotulo="demandas" />
       ) : (
         <div className="lcard-grid">
-          {orders.map((order) => (
+          {filtros.filtrados.map((order) => (
             <OrderCard key={order.id} order={order} to={`/app/demandas/${order.id}`} />
           ))}
         </div>

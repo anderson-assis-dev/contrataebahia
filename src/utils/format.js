@@ -47,6 +47,13 @@ export const formatCep = (v) => {
 export const formatMoney = (value) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value) || 0);
 
+/** Data do banco ("2026-10-14 09:30:00") vira Date, ou null se não der. */
+export const toDate = (value) => {
+  if (!value) return null;
+  const date = new Date(String(value).replace(' ', 'T'));
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
 export const formatDateBR = (value) => {
   if (!value) return '';
   const date = new Date(String(value).replace(' ', 'T'));

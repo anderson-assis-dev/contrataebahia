@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Briefcase, Wrench } from 'lucide-react';
 import { listOrders } from '../../services/orders';
 import OrderCard from '../components/OrderCard';
+import ListFilters, { SemResultado, useListFilters } from '../components/ListFilters';
 import ServiceCatalog from './ServiceCatalog';
 import '../ui.css';
 
@@ -12,17 +13,22 @@ const FILTERS = [
   { value: 'cancelled', label: 'Cancelados' },
 ];
 
+const TEXTOS = (o) => [o.title, o.description, o.category, o.city, o.neighborhood];
+const DATA = (o) => o.created_at;
+const VALOR = (o) => o.budget;
+
 export default function MyServices() {
   const [tab, setTab] = useState('jobs');
   const [status, setStatus] = useState('in_progress');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const filtros = useListFilters(orders, { textos: TEXTOS, data: DATA, valor: VALOR });
 
   useEffect(() => {
     if (tab !== 'jobs') return undefined;
     let active = true;
     setLoading(true);
-    listOrders({ status })
+    listOrders({ status, limit: 100 })
       .then((json) => {
         if (active) setOrders(json?.data?.data || []);
       })
@@ -71,6 +77,15 @@ export default function MyServices() {
             ))}
           </div>
 
+          {orders.length > 0 && (
+            <ListFilters
+              filtros={filtros}
+              placeholder="Buscar por título, categoria ou cidade"
+              rotulo="serviços"
+              comValor
+            />
+          )}
+
           {loading ? (
             <div className="lcard-grid">
               <div className="skel lcard-skel" />
@@ -88,9 +103,11 @@ export default function MyServices() {
                 Ver demandas abertas
               </Link>
             </div>
+          ) : filtros.filtrados.length === 0 ? (
+            <SemResultado onLimpar={filtros.limpar} rotulo="serviços" />
           ) : (
             <div className="lcard-grid">
-              {orders.map((order) => (
+              {filtros.filtrados.map((order) => (
                 <OrderCard key={order.id} order={order} to={`/app/servicos/${order.id}/andamento`} />
               ))}
             </div>
