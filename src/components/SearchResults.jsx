@@ -2,10 +2,10 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Search, Star, ArrowLeft, X, Briefcase, CheckCircle2, Zap, SearchX,
-  ChevronRight,
+  ChevronRight, SlidersHorizontal,
 } from 'lucide-react';
 import './SearchResults.css';
-import LocationFilter from './LocationFilter';
+import SearchFilters from './SearchFilters';
 import VerificationBadge from './VerificationBadge';
 import { apiGet, API_ENABLED } from '../utils/api';
 import { STATIC_CATEGORIES } from '../data/categories';
@@ -209,6 +209,7 @@ export default function SearchResults() {
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [locating, setLocating] = useState(false);
   const [locations, setLocations] = useState([]);
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -217,7 +218,7 @@ export default function SearchResults() {
   const [providerDetails, setProviderDetails] = useState(null);
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
-  const fetchProviders = useCallback(async (q, city, state) => {
+  const fetchProviders = useCallback(async (filtros) => {
     if (!API_ENABLED) {
       setProviders([]);
       return;
@@ -225,9 +226,9 @@ export default function SearchResults() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (q) params.set('q', q);
-      if (city) params.set('city', city);
-      if (state) params.set('state', state);
+      ['q', 'city', 'state', 'verified', 'min_rating', 'doc_type', 'mei', 'premium', 'sort'].forEach((k) => {
+        if (filtros[k]) params.set(k, filtros[k]);
+      });
       const data = await apiGet(`/api/providers/search?${params}`);
       setProviders(Array.isArray(data) ? data : []);
     } catch {
@@ -238,11 +239,7 @@ export default function SearchResults() {
   }, []);
 
   useEffect(() => {
-    fetchProviders(
-      searchParams.get('q') || '',
-      searchParams.get('city') || '',
-      searchParams.get('state') || ''
-    );
+    fetchProviders(Object.fromEntries(searchParams));
   }, [searchParams, fetchProviders]);
 
   // mantém o campo de busca igual ao que está na URL, inclusive ao clicar numa categoria
@@ -284,23 +281,13 @@ export default function SearchResults() {
   }, []);
 
   const aplicarFiltros = (mudancas) => {
-    const atual = {
-      q: searchParams.get('q') || '',
-      city: searchParams.get('city') || '',
-      state: searchParams.get('state') || '',
-      ...mudancas,
-    };
+    const atual = { ...Object.fromEntries(searchParams), ...mudancas };
     const next = {};
     Object.entries(atual).forEach(([chave, valor]) => {
-      const limpo = String(valor || '').trim();
+      const limpo = String(valor ?? '').trim();
       if (limpo) next[chave] = limpo;
     });
     setSearchParams(next);
-  };
-
-  const goToCategory = (label) => {
-    aplicarFiltros({ q: label || '' });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearch = (e) => {
@@ -407,31 +394,6 @@ export default function SearchResults() {
           )}
         </nav>
 
-        <div className="sr-cat-nav" role="group" aria-label="Filtrar por categoria">
-          <button
-            type="button"
-            className={`sr-cat-chip${q ? '' : ' sr-cat-chip-on'}`}
-            aria-pressed={!q}
-            onClick={() => goToCategory('')}
-          >
-            Todas
-          </button>
-          {categories.map((c) => {
-            const on = q.toLowerCase() === c.label.toLowerCase();
-            return (
-              <button
-                key={c.label}
-                type="button"
-                className={`sr-cat-chip${on ? ' sr-cat-chip-on' : ''}`}
-                aria-pressed={on}
-                onClick={() => goToCategory(c.label)}
-              >
-                {c.label}
-              </button>
-            );
-          })}
-        </div>
-
         <div className="sr-meta">
           <h1 className="sr-meta-title">
             {q ? `Prestadores de "${q}"` : 'Todos os prestadores'}
@@ -445,15 +407,24 @@ export default function SearchResults() {
           )}
         </div>
 
-        <LocationFilter
-          locations={locations}
-          state={searchParams.get('state') || ''}
-          city={searchParams.get('city') || ''}
-          onChange={({ state, city }) => aplicarFiltros({ state, city })}
-          locating={locating}
-          onUseLocation={handleUseLocation}
-        />
+        <button type="button" className="sr-filtros-toggle" onClick={() => setFiltrosAbertos((a) => !a)}>
+          <SlidersHorizontal size={16} /> Filtros
+        </button>
 
+        <div className="sr-layout">
+          <div className={`sr-sidebar${filtrosAbertos ? ' sr-sidebar-aberta' : ''}`}>
+            <SearchFilters
+              valores={Object.fromEntries(searchParams)}
+              categories={categories}
+              locations={locations}
+              locating={locating}
+              onUseLocation={handleUseLocation}
+              onChange={(m) => aplicarFiltros(m)}
+              onClear={() => setSearchParams({})}
+            />
+          </div>
+
+          <div className="sr-results">
         {loading && (
           <div className="sr-loading">
             <div className="sr-spinner" />
@@ -481,6 +452,8 @@ export default function SearchResults() {
             ))}
           </div>
         )}
+          </div>
+        </div>
       </div>
 
       <ProviderModal

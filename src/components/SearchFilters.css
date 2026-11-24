@@ -1,0 +1,112 @@
+.sf {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 18px 18px;
+  align-self: start;
+}
+
+.sf-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+.sf-head-titulo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+}
+.sf-limpar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.sf-limpar:hover { text-decoration: underline; }
+
+.sf-sec {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.sf-sec:last-child { border-bottom: none; }
+.sf-sec-titulo {
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.sf-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.sf-cat {
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 0.86rem;
+  color: var(--text-soft);
+  font-family: inherit;
+}
+.sf-cat:hover { background: var(--blue-50); }
+.sf-cat-on {
+  background: var(--blue-50);
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.sf-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sf-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.86rem;
+  color: var(--text-soft);
+}
+.sf-opt input {
+  accent-color: var(--blue);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.sf-opt-estrela {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sf-star { color: #f5a623; fill: #f5a623; }
+.sf-ico-verif { color: var(--blue); }
+.sf-ico-premium { color: #c98a00; }
+
+.sf .lf {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 0;
+}
+.sf .lf-uf,
+.sf .lf-cidade {
+  flex: 1 1 auto;
+  min-width: 0;
+}

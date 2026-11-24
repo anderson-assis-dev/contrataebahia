@@ -689,3 +689,51 @@
     width: 100%;
   }
 }
+
+/* Layout em duas colunas estilo OLX */
+.sr-layout {
+  display: grid;
+  grid-template-columns: 272px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.sr-results {
+  min-width: 0;
+}
+.sr-results .sr-grid {
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+.sr-filtros-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1.5px solid var(--blue);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--blue);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .sr-layout {
+    grid-template-columns: 1fr;
+  }
+  .sr-filtros-toggle {
+    display: inline-flex;
+  }
+  .sr-sidebar {
+    display: none;
+  }
+  .sr-sidebar-aberta {
+    display: block;
+    margin-bottom: 18px;
+  }
+}
