@@ -1,0 +1,81 @@
+.mrc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mrc-head .card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blue);
+}
+
+.mrc-media {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.mrc-media small {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.mrc-sub {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.mrc-vazio {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.mrc-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mrc-item {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+.mrc-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.mrc-stars {
+  display: inline-flex;
+  gap: 1px;
+}
+.mrc-star-on {
+  color: #f5a623;
+  fill: #f5a623;
+}
+.mrc-star-off {
+  color: var(--border-strong);
+}
+.mrc-who {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.mrc-when {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+.mrc-text {
+  font-size: 0.86rem;
+  color: var(--text-soft);
+  line-height: 1.5;
+}

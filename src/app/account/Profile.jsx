@@ -26,6 +26,7 @@ import {
 import { apiError } from '../../services/http';
 import { formatCep, formatPhone, onlyDigits } from '../../utils/format';
 import VerificationCard from '../../components/VerificationCard';
+import MyRatingsCard from '../../components/MyRatingsCard';
 import '../forms.css';
 import '../ui.css';
 import './Profile.css';
@@ -268,6 +269,8 @@ export default function Profile() {
         </form>
 
         {isProvider && <VerificationCard user={user} onVerified={refreshUser} />}
+
+        <MyRatingsCard user={user} isProvider={isProvider} />
 
         <div className="card stack">
           <div className="card-title">Como você usa o Contrataê</div>
