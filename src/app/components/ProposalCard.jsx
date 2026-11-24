@@ -1,6 +1,7 @@
 import React from 'react';
-import { BadgeCheck, Check, Clock, Crown, Star, X } from 'lucide-react';
+import { Check, Clock, Crown, Star, X } from 'lucide-react';
 import { PROPOSAL_STATUS_LABEL } from '../../services/proposals';
+import VerificationBadge from '../../components/VerificationBadge';
 import { formatMoney, timeAgo } from '../../utils/format';
 import './ProposalCard.css';
 
@@ -43,10 +44,10 @@ export default function ProposalCard({ proposal, onAccept, onReject, busy, canDe
               </span>
             )}
             {verified && (
-              <span className="prop-tag prop-tag-verified" title="Identidade confirmada com documento e prova de vida">
-                <BadgeCheck size={12} />
-                Verificado
-              </span>
+              <VerificationBadge
+                provider={{ is_verified: 1, verification_level: nivel, is_mei: ehMei ? 1 : 0, document_type: docTipo }}
+                compact
+              />
             )}
             {empresaVerificada && (
               <span className="prop-tag prop-tag-empresa" title="Empresa ativa na Receita Federal">

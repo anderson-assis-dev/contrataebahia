@@ -2,10 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   Search, Star, ArrowLeft, X, Briefcase, CheckCircle2, Zap, SearchX,
-  ChevronRight, BadgeCheck,
+  ChevronRight,
 } from 'lucide-react';
 import './SearchResults.css';
 import LocationFilter from './LocationFilter';
+import VerificationBadge from './VerificationBadge';
 import { apiGet, API_ENABLED } from '../utils/api';
 import { STATIC_CATEGORIES } from '../data/categories';
 
@@ -41,12 +42,7 @@ function ProviderCard({ provider }) {
       <div className="sr-card-body">
         <div className="sr-name">
           {provider.name}
-          {Number(provider.is_verified) === 1 && (
-            <span className="sr-verified" title="Identidade confirmada com documento e prova de vida">
-              <BadgeCheck size={14} strokeWidth={2.4} aria-hidden="true" />
-              Verificado
-            </span>
-          )}
+          <VerificationBadge provider={provider} />
           {provider.document_type === 'cnpj' && Number(provider.verification_level) >= 3 && (
             <span className="sr-empresa" title="Empresa ativa na Receita Federal">
               {Number(provider.is_mei) === 1 ? 'MEI' : 'Empresa'}
@@ -87,7 +83,10 @@ function ProviderModal({ open, onClose, provider, details, loading }) {
     >
       <div className="sr-modal">
         <div className="sr-modal-head">
-          <div className="sr-modal-title">{provider?.name || 'Prestador'}</div>
+          <div className="sr-modal-title">
+            {provider?.name || 'Prestador'}
+            <VerificationBadge provider={details || provider} />
+          </div>
           <button type="button" className="sr-modal-close" onClick={onClose} aria-label="Fechar">
             <X size={18} />
           </button>
@@ -169,6 +168,34 @@ function ProviderModal({ open, onClose, provider, details, loading }) {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+
+          <div className="sr-modal-section">
+            <div className="sr-modal-section-title">
+              O que os clientes dizem
+              {details?.ratings_count > 0 && <span className="sr-modal-count"> ({details.ratings_count})</span>}
+            </div>
+            {loading && <div className="sr-modal-loading">Carregando...</div>}
+            {!loading && (!details?.reviews || details.reviews.length === 0) && (
+              <div className="sr-modal-empty">Ainda sem avaliações</div>
+            )}
+            {!loading && details?.reviews?.length > 0 && (
+              <ul className="sr-reviews">
+                {details.reviews.map((r) => (
+                  <li key={r.id} className="sr-review">
+                    <div className="sr-review-head">
+                      <span className="sr-review-stars">
+                        {[1, 2, 3, 4, 5].map((v) => (
+                          <Star key={v} size={13} className={v <= Number(r.rating) ? 'sr-star-on' : 'sr-star-off'} />
+                        ))}
+                      </span>
+                      <span className="sr-review-who">{r.client_name || 'Cliente'}</span>
+                    </div>
+                    {r.comment && <p className="sr-review-text">{r.comment}</p>}
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
