@@ -141,3 +141,8 @@ export const confirmSchedule = async (id) => {
 };
 
 export const completeOrder = (id) => updateOrder(id, { status: ORDER_STATUS.COMPLETED });
+
+export const getOrderRating = async (orderId) => {
+  const { data } = await http.get(`/orders/${orderId}/my-rating`);
+  return data;
+};

@@ -11,8 +11,10 @@ import {
   Pause,
   Play,
   RefreshCw,
+  Star,
   Tag,
   Trash2,
+  Route as RouteIcon,
 } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
 import {
@@ -22,11 +24,13 @@ import {
   resolveOrder,
   startAuction,
   toggleStopOrder,
+  getOrderRating,
 } from '../../services/orders';
 import { acceptProposal, rejectProposal } from '../../services/proposals';
 import { apiError } from '../../services/http';
 import useCountdown from '../hooks/useCountdown';
 import ProposalCard from '../components/ProposalCard';
+import RateProviderModal from '../../components/RateProviderModal';
 import Attachments from '../components/Attachments';
 import FullPageLoader from '../FullPageLoader';
 import { formatDateTimeBR, formatMoney } from '../../utils/format';
@@ -44,6 +48,8 @@ export default function OrderDetail() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [ratingPedido, setRatingPedido] = useState(null);
+  const [avaliando, setAvaliando] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [reason, setReason] = useState('');
 
@@ -72,6 +78,11 @@ export default function OrderDetail() {
     const timer = setInterval(() => load(true), POLL_MS);
     return () => clearInterval(timer);
   }, [order?.status, load]);
+
+  useEffect(() => {
+    if (order?.status !== 'completed') return;
+    getOrderRating(id).then((json) => setRatingPedido(json?.data || null)).catch(() => {});
+  }, [order?.status, id]);
 
   const auctionEnd = order?.auction_ends_at;
   const { label: remaining, expired } = useCountdown(auctionEnd);
@@ -348,6 +359,34 @@ export default function OrderDetail() {
           <div className="card stack">
             <div className="card-title">Ações</div>
 
+            {order.status === 'completed' && (
+              <>
+                {ratingPedido ? (
+                  <div className="od-rated">
+                    <div className="od-rated-head">
+                      <span className="od-rated-stars">
+                        {[1, 2, 3, 4, 5].map((v) => (
+                          <Star key={v} size={16} className={v <= Number(ratingPedido.rating) ? 'od-star-on' : 'od-star-off'} />
+                        ))}
+                      </span>
+                      <span className="od-rated-k">Sua avaliação</span>
+                    </div>
+                    {ratingPedido.comment && <p className="od-rated-text">“{ratingPedido.comment}”</p>}
+                    <button type="button" className="f-ghost" onClick={() => setAvaliando(true)}>
+                      <Star size={16} /> Editar avaliação
+                    </button>
+                  </div>
+                ) : (
+                  <button type="button" className="f-ghost" onClick={() => setAvaliando(true)}>
+                    <Star size={16} /> Avaliar prestador
+                  </button>
+                )}
+                <Link to={`/app/pedidos/${id}/andamento`} className="f-ghost">
+                  <RouteIcon size={16} /> Ver andamento
+                </Link>
+              </>
+            )}
+
             {(isOpen || isStopped) && (
               <>
                 <button type="button" className="f-ghost" onClick={handleToggleStop} disabled={busy}>
@@ -412,6 +451,20 @@ export default function OrderDetail() {
           <p className="od-created">Criado em {formatDateTimeBR(order.created_at)}</p>
         </div>
       </div>
+
+      {avaliando && accepted && (
+        <RateProviderModal
+          providerId={accepted.provider_id}
+          orderId={id}
+          atual={ratingPedido}
+          onClose={() => setAvaliando(false)}
+          onSaved={(data) => {
+            setAvaliando(false);
+            setRatingPedido(data);
+            toast.success(ratingPedido ? 'Avaliação atualizada.' : 'Obrigado pela avaliação!');
+          }}
+        />
+      )}
     </>
   );
 }
