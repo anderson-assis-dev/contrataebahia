@@ -36,8 +36,6 @@ export default function FindProviders() {
       .catch(() => {});
   }, []);
 
-  // Os lugares acompanham a categoria escolhida: contagem e resultado precisam
-  // dizer a mesma coisa.
   useEffect(() => {
     let active = true;
     listProviderLocations(category)

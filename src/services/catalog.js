@@ -18,8 +18,6 @@ export const searchProviders = async ({ category, city, state, limit } = {}) => 
   return data;
 };
 
-// UFs e cidades que têm prestador — a mesma lista do site, para o filtro só
-// oferecer lugar com resultado.
 export const listProviderLocations = async (category) => {
   const { data } = await http.get('/providers/locations', {
     params: category ? { q: category } : undefined,

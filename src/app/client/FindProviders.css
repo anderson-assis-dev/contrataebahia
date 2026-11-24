@@ -1,5 +1,3 @@
-/* O campo de cidade virou o componente LocationFilter, com UF e cidade. */
-
 .find-grid {
   display: grid;
   gap: 12px;

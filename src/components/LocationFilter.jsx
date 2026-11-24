@@ -2,8 +2,6 @@ import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { MapPin, ChevronDown, X, Loader2 } from 'lucide-react';
 import './LocationFilter.css';
 
-// Sem acento e em minúsculas: quem procura "sao paulo" com pressa no celular
-// precisa achar "São Paulo".
 const normalizar = (texto) =>
   String(texto || '')
     .normalize('NFD')
@@ -13,9 +11,6 @@ const normalizar = (texto) =>
 
 const plural = (n) => `${n} prestador${n === 1 ? '' : 'es'}`;
 
-// Só para o rótulo: quando a categoria buscada não tem ninguém na UF escolhida,
-// ela some da lista do servidor e o botão não pode passar a dizer "Todo o
-// Brasil" enquanto a busca continua presa àquela UF.
 const NOMES_UF = {
   AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia',
   CE: 'Ceará', DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás',
@@ -27,13 +22,6 @@ const NOMES_UF = {
   TO: 'Tocantins',
 };
 
-/**
- * Filtro de localização da busca: UF e cidade, encadeadas.
- *
- * A lista vem do banco (só lugares que têm prestador), então nenhuma escolha
- * leva a resultado vazio. A cidade tem autocomplete porque a lista cresce com
- * a base e rolar 300 municípios num celular não é escolha, é castigo.
- */
 export default function LocationFilter({
   locations = [],
   state = '',
@@ -47,8 +35,6 @@ export default function LocationFilter({
   const [texto, setTexto] = useState(city);
   const [emFoco, setEmFoco] = useState(0);
 
-  // O leitor de tela precisa saber qual lista o campo controla e qual opção
-  // está em foco enquanto se navega pelas setas.
   const idBase = useId();
   const idLista = `${idBase}-cidades`;
 
@@ -57,8 +43,6 @@ export default function LocationFilter({
   const campoCidade = useRef(null);
   const listaCidade = useRef(null);
 
-  // O campo segue a URL: voltar no navegador ou clicar numa categoria tem de
-  // deixar o filtro mostrando o que está realmente sendo buscado.
   useEffect(() => setTexto(city), [city]);
 
   const totalDeUfs = useMemo(
@@ -72,8 +56,6 @@ export default function LocationFilter({
       || { state, name: NOMES_UF[state] || state, providers_count: 0, cities: [] };
   }, [locations, state]);
 
-  // A UF escolhida precisa continuar na lista mesmo sem resultado nesta
-  // categoria, ou não há como desfazer a escolha por ela.
   const ufsNaLista = useMemo(() => {
     if (ufEscolhida && !locations.some((uf) => uf.state === ufEscolhida.state)) {
       return [ufEscolhida, ...locations];
@@ -81,7 +63,6 @@ export default function LocationFilter({
     return locations;
   }, [locations, ufEscolhida]);
 
-  // Sem UF escolhida o autocomplete procura no país inteiro; com UF, só nela.
   const cidadesBase = useMemo(() => {
     if (ufEscolhida) {
       return ufEscolhida.cities.map((c) => ({
@@ -97,16 +78,12 @@ export default function LocationFilter({
 
   const sugestoes = useMemo(() => {
     const termo = normalizar(texto);
-    // Texto igual ao que já está escolhido significa campo parado, não busca:
-    // mostramos a lista inteira para a pessoa trocar de cidade sem apagar.
     if (!termo || termo === normalizar(city)) return cidadesBase.slice(0, 60);
     return cidadesBase.filter((c) => normalizar(c.city).includes(termo)).slice(0, 60);
   }, [cidadesBase, texto, city]);
 
   useEffect(() => setEmFoco(0), [texto, cidadeAberta]);
 
-  // Fecha ao clicar fora: painel aberto por cima dos cards atrapalha mais do
-  // que ajuda.
   useEffect(() => {
     const foraDaCaixa = (e) => {
       if (caixaUf.current && !caixaUf.current.contains(e.target)) setUfAberta(false);
@@ -127,8 +104,6 @@ export default function LocationFilter({
   const escolherUf = (sigla) => {
     setUfAberta(false);
     if (sigla === state) return;
-    // Trocar de UF com uma cidade de outra UF escolhida deixaria o filtro
-    // pedindo Salvador em São Paulo, que não devolve nada.
     const cidadeContinuaValendo = sigla
       && locations.find((uf) => uf.state === sigla)?.cities
         .some((c) => normalizar(c.name) === normalizar(city));
@@ -138,7 +113,6 @@ export default function LocationFilter({
   const escolherCidade = (opcao) => {
     setCidadeAberta(false);
     setTexto(opcao.city);
-    // A cidade já carrega a UF: escolher Salvador seleciona a Bahia junto.
     onChange?.({ state: opcao.state, city: opcao.city });
   };
 
@@ -176,7 +150,6 @@ export default function LocationFilter({
 
   return (
     <div className="lf">
-      {/* ── Estado ─────────────────────────────────────────── */}
       <div className={`lf-campo lf-uf${ufAberta ? ' lf-aberto' : ''}`} ref={caixaUf}>
         <button
           type="button"
@@ -225,7 +198,6 @@ export default function LocationFilter({
         )}
       </div>
 
-      {/* ── Cidade, com autocomplete ───────────────────────── */}
       <div className={`lf-campo lf-cidade${cidadeAberta ? ' lf-aberto' : ''}`} ref={caixaCidade}>
         <div className="lf-entrada">
           <MapPin size={15} className="lf-icone" aria-hidden="true" />
@@ -289,7 +261,6 @@ export default function LocationFilter({
         )}
       </div>
 
-      {/* Nem toda tela tem espaço para o atalho de GPS; sem o handler ele some. */}
       {onUseLocation && (
         <button
           type="button"

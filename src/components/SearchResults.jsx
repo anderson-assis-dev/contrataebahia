@@ -11,8 +11,6 @@ import { STATIC_CATEGORIES } from '../data/categories';
 
 const FALLBACK_CATEGORIES = STATIC_CATEGORIES.map((c) => ({ label: c.label }));
 
-// "Maceió" e "Maceio" têm de ser a mesma cidade na hora de comparar o que o
-// reverse geocode devolve com a lista que veio do banco.
 const semAcento = (texto) =>
   String(texto || '')
     .normalize('NFD')
@@ -220,10 +218,6 @@ export default function SearchResults() {
     setQuery(searchParams.get('q') || '');
   }, [searchParams]);
 
-  // Os lugares vêm do banco e só trazem quem tem prestador: assim nenhuma
-  // escolha do filtro leva a uma lista vazia. Vão junto com a categoria da
-  // busca, senão a lista oferecia "Salvador (7)" numa busca por Limpeza que
-  // devolve zero — a contagem é de prestador de qualquer serviço.
   const termoDaBusca = searchParams.get('q') || '';
   useEffect(() => {
     if (!API_ENABLED) return undefined;
@@ -257,8 +251,6 @@ export default function SearchResults() {
     return () => { active = false; };
   }, []);
 
-  // Um lugar só para montar a URL: o filtro de localização precisa sobreviver
-  // a uma troca de categoria, e a categoria a uma troca de cidade.
   const aplicarFiltros = (mudancas) => {
     const atual = {
       q: searchParams.get('q') || '',
@@ -297,12 +289,9 @@ export default function SearchResults() {
           const endereco = data.address || {};
           const cidade = endereco.city || endereco.town
             || endereco.village || endereco.municipality || endereco.county || '';
-          // O Nominatim devolve "Bahia" por extenso; a sigla só aparece no
-          // código ISO. Sem UF o filtro não fecha com a coluna do banco.
           const sigla = String(endereco['ISO3166-2-lvl4'] || '').replace('BR-', '').toUpperCase()
             || locations.find((uf) => semAcento(uf.name) === semAcento(endereco.state))?.state
             || '';
-          // Encaixa na grafia da lista para a comparação do filtro bater.
           const daLista = locations.find((uf) => uf.state === sigla)?.cities
             .find((c) => semAcento(c.name) === semAcento(cidade));
           aplicarFiltros({ city: daLista?.name || cidade, state: sigla });
@@ -317,7 +306,6 @@ export default function SearchResults() {
     );
   };
 
-  // "em Salvador - BA" quando há cidade, "na Bahia" quando só há UF.
   const ufDoFiltro = locations.find((uf) => uf.state === (searchParams.get('state') || ''));
   const cidadeDoFiltro = searchParams.get('city') || '';
   const lugarNoSubtitulo = cidadeDoFiltro
