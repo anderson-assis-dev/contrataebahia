@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Search, SearchX, Star } from 'lucide-react';
-import { listCategories, searchProviders } from '../../services/catalog';
+import { Search, SearchX, Star } from 'lucide-react';
+import { listCategories, listProviderLocations, searchProviders } from '../../services/catalog';
+import LocationFilter from '../../components/LocationFilter';
 import { STATIC_CATEGORIES } from '../../data/categories';
 import '../ui.css';
 import '../forms.css';
@@ -21,6 +22,8 @@ export default function FindProviders() {
   const [categories, setCategories] = useState(FALLBACK_LABELS);
   const [category, setCategory] = useState('');
   const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [locations, setLocations] = useState([]);
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,11 +36,23 @@ export default function FindProviders() {
       .catch(() => {});
   }, []);
 
+  // Os lugares acompanham a categoria escolhida: contagem e resultado precisam
+  // dizer a mesma coisa.
+  useEffect(() => {
+    let active = true;
+    listProviderLocations(category)
+      .then((json) => {
+        if (active && Array.isArray(json?.data)) setLocations(json.data);
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [category]);
+
   useEffect(() => {
     let active = true;
     setLoading(true);
     const timer = setTimeout(() => {
-      searchProviders({ category, city })
+      searchProviders({ category, city, state })
         .then((json) => {
           if (active) setProviders(json?.data || []);
         })
@@ -52,7 +67,7 @@ export default function FindProviders() {
       active = false;
       clearTimeout(timer);
     };
-  }, [category, city]);
+  }, [category, city, state]);
 
   return (
     <>
@@ -63,21 +78,12 @@ export default function FindProviders() {
         </p>
       </div>
 
-      <div className="find-filters">
-        <div className="f-field">
-          <label htmlFor="find-city">Cidade</label>
-          <div className="find-input-ico">
-            <MapPin size={16} />
-            <input
-              id="find-city"
-              className="f-input"
-              placeholder="Salvador, Feira de Santana..."
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-          </div>
-        </div>
-      </div>
+      <LocationFilter
+        locations={locations}
+        state={state}
+        city={city}
+        onChange={(lugar) => { setState(lugar.state); setCity(lugar.city); }}
+      />
 
       <div className="chips" style={{ marginBottom: 18 }}>
         <button

@@ -6,9 +6,23 @@ export const listCategories = async (limit) => {
   return data;
 };
 
-export const searchProviders = async ({ category, city, limit } = {}) => {
+export const searchProviders = async ({ category, city, state, limit } = {}) => {
   const { data } = await http.get('/providers/search', {
-    params: { q: category || undefined, city: city || undefined, limit: limit || 24 },
+    params: {
+      q: category || undefined,
+      city: city || undefined,
+      state: state || undefined,
+      limit: limit || 24,
+    },
+  });
+  return data;
+};
+
+// UFs e cidades que têm prestador — a mesma lista do site, para o filtro só
+// oferecer lugar com resultado.
+export const listProviderLocations = async (category) => {
+  const { data } = await http.get('/providers/locations', {
+    params: category ? { q: category } : undefined,
   });
   return data;
 };

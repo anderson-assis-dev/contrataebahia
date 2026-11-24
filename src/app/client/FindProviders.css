@@ -1,23 +1,4 @@
-.find-filters {
-  margin-bottom: 14px;
-}
-
-.find-input-ico {
-  position: relative;
-}
-
-.find-input-ico svg {
-  position: absolute;
-  top: 50%;
-  left: 13px;
-  transform: translateY(-50%);
-  color: var(--muted2);
-  pointer-events: none;
-}
-
-.find-input-ico .f-input {
-  padding-left: 38px;
-}
+/* O campo de cidade virou o componente LocationFilter, com UF e cidade. */
 
 .find-grid {
   display: grid;

@@ -1,14 +1,24 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
-  Search, Star, ArrowLeft, X, Briefcase, CheckCircle2, Zap, MapPin, Loader2, SearchX,
+  Search, Star, ArrowLeft, X, Briefcase, CheckCircle2, Zap, SearchX,
   ChevronRight, BadgeCheck,
 } from 'lucide-react';
 import './SearchResults.css';
+import LocationFilter from './LocationFilter';
 import { apiGet, API_ENABLED } from '../utils/api';
 import { STATIC_CATEGORIES } from '../data/categories';
 
 const FALLBACK_CATEGORIES = STATIC_CATEGORIES.map((c) => ({ label: c.label }));
+
+// "Maceió" e "Maceio" têm de ser a mesma cidade na hora de comparar o que o
+// reverse geocode devolve com a lista que veio do banco.
+const semAcento = (texto) =>
+  String(texto || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
 
 function Avatar({ provider }) {
   if (provider.avatar_base64) {
@@ -167,8 +177,8 @@ function ProviderModal({ open, onClose, provider, details, loading }) {
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('q') || '');
-  const [cityInput, setCityInput] = useState(searchParams.get('city') || '');
   const [locating, setLocating] = useState(false);
+  const [locations, setLocations] = useState([]);
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -177,7 +187,7 @@ export default function SearchResults() {
   const [providerDetails, setProviderDetails] = useState(null);
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
 
-  const fetchProviders = useCallback(async (q, city) => {
+  const fetchProviders = useCallback(async (q, city, state) => {
     if (!API_ENABLED) {
       setProviders([]);
       return;
@@ -187,6 +197,7 @@ export default function SearchResults() {
       const params = new URLSearchParams();
       if (q) params.set('q', q);
       if (city) params.set('city', city);
+      if (state) params.set('state', state);
       const data = await apiGet(`/api/providers/search?${params}`);
       setProviders(Array.isArray(data) ? data : []);
     } catch {
@@ -197,14 +208,38 @@ export default function SearchResults() {
   }, []);
 
   useEffect(() => {
-    fetchProviders(searchParams.get('q') || '', searchParams.get('city') || '');
+    fetchProviders(
+      searchParams.get('q') || '',
+      searchParams.get('city') || '',
+      searchParams.get('state') || ''
+    );
   }, [searchParams, fetchProviders]);
 
   // mantém o campo de busca igual ao que está na URL, inclusive ao clicar numa categoria
   useEffect(() => {
     setQuery(searchParams.get('q') || '');
-    setCityInput(searchParams.get('city') || '');
   }, [searchParams]);
+
+  // Os lugares vêm do banco e só trazem quem tem prestador: assim nenhuma
+  // escolha do filtro leva a uma lista vazia. Vão junto com a categoria da
+  // busca, senão a lista oferecia "Salvador (7)" numa busca por Limpeza que
+  // devolve zero — a contagem é de prestador de qualquer serviço.
+  const termoDaBusca = searchParams.get('q') || '';
+  useEffect(() => {
+    if (!API_ENABLED) return undefined;
+    let ativo = true;
+    (async () => {
+      try {
+        const params = new URLSearchParams();
+        if (termoDaBusca) params.set('q', termoDaBusca);
+        const data = await apiGet(`/api/providers/locations?${params}`);
+        if (ativo && Array.isArray(data)) setLocations(data);
+      } catch {
+        // sem a lista o filtro some, mas a busca por categoria continua de pé
+      }
+    })();
+    return () => { ativo = false; };
+  }, [termoDaBusca]);
 
   useEffect(() => {
     let active = true;
@@ -222,21 +257,31 @@ export default function SearchResults() {
     return () => { active = false; };
   }, []);
 
-  const goToCategory = (label) => {
+  // Um lugar só para montar a URL: o filtro de localização precisa sobreviver
+  // a uma troca de categoria, e a categoria a uma troca de cidade.
+  const aplicarFiltros = (mudancas) => {
+    const atual = {
+      q: searchParams.get('q') || '',
+      city: searchParams.get('city') || '',
+      state: searchParams.get('state') || '',
+      ...mudancas,
+    };
     const next = {};
-    if (label) next.q = label;
-    const city = searchParams.get('city');
-    if (city) next.city = city;
+    Object.entries(atual).forEach(([chave, valor]) => {
+      const limpo = String(valor || '').trim();
+      if (limpo) next[chave] = limpo;
+    });
     setSearchParams(next);
+  };
+
+  const goToCategory = (label) => {
+    aplicarFiltros({ q: label || '' });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const next = {};
-    if (query) next.q = query;
-    if (cityInput.trim()) next.city = cityInput.trim();
-    setSearchParams(next);
+    aplicarFiltros({ q: query });
   };
 
   const handleUseLocation = () => {
@@ -249,15 +294,20 @@ export default function SearchResults() {
             `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=pt-BR`
           );
           const data = await res.json();
-          const city = data.address?.city || data.address?.town
-            || data.address?.village || data.address?.county || '';
-          setCityInput(city);
-          const next = {};
-          if (searchParams.get('q')) next.q = searchParams.get('q');
-          if (city) next.city = city;
-          setSearchParams(next);
+          const endereco = data.address || {};
+          const cidade = endereco.city || endereco.town
+            || endereco.village || endereco.municipality || endereco.county || '';
+          // O Nominatim devolve "Bahia" por extenso; a sigla só aparece no
+          // código ISO. Sem UF o filtro não fecha com a coluna do banco.
+          const sigla = String(endereco['ISO3166-2-lvl4'] || '').replace('BR-', '').toUpperCase()
+            || locations.find((uf) => semAcento(uf.name) === semAcento(endereco.state))?.state
+            || '';
+          // Encaixa na grafia da lista para a comparação do filtro bater.
+          const daLista = locations.find((uf) => uf.state === sigla)?.cities
+            .find((c) => semAcento(c.name) === semAcento(cidade));
+          aplicarFiltros({ city: daLista?.name || cidade, state: sigla });
         } catch {
-          // o usuário ainda pode digitar a cidade manualmente
+          // o usuário ainda pode escolher a cidade na lista
         } finally {
           setLocating(false);
         }
@@ -267,12 +317,12 @@ export default function SearchResults() {
     );
   };
 
-  const clearCity = () => {
-    setCityInput('');
-    const next = {};
-    if (searchParams.get('q')) next.q = searchParams.get('q');
-    setSearchParams(next);
-  };
+  // "em Salvador - BA" quando há cidade, "na Bahia" quando só há UF.
+  const ufDoFiltro = locations.find((uf) => uf.state === (searchParams.get('state') || ''));
+  const cidadeDoFiltro = searchParams.get('city') || '';
+  const lugarNoSubtitulo = cidadeDoFiltro
+    ? ` em ${cidadeDoFiltro}${ufDoFiltro ? ` - ${ufDoFiltro.state}` : ''}`
+    : (ufDoFiltro ? ` em ${ufDoFiltro.name}` : '');
 
   const openProvider = async (p) => {
     setSelectedProvider(p);
@@ -370,40 +420,19 @@ export default function SearchResults() {
             <div className="sr-meta-sub">
               {providers.length} prestador{providers.length !== 1 ? 'es' : ''} encontrado
               {providers.length !== 1 ? 's' : ''}
-              {searchParams.get('city') && ` em ${searchParams.get('city')}`}
+              {lugarNoSubtitulo}
             </div>
           )}
         </div>
 
-        <div className="sr-city-filter">
-          <div className="sr-city-input-wrap">
-            <MapPin size={15} className="sr-city-icon" aria-hidden="true" />
-            <input
-              type="text"
-              className="sr-city-input"
-              aria-label="Filtrar por cidade"
-              placeholder="Filtrar por cidade..."
-              value={cityInput}
-              onChange={(e) => setCityInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch(e)}
-            />
-            {cityInput && (
-              <button type="button" className="sr-city-clear" onClick={clearCity} aria-label="Limpar cidade">
-                <X size={13} />
-              </button>
-            )}
-          </div>
-          <button
-            type="button"
-            className={`sr-locate-btn${locating ? ' loading' : ''}`}
-            onClick={handleUseLocation}
-            disabled={locating}
-            title="Usar minha localização"
-          >
-            {locating ? <Loader2 size={15} className="sr-spin" /> : <MapPin size={15} />}
-            {locating ? 'Localizando...' : 'Usar localização'}
-          </button>
-        </div>
+        <LocationFilter
+          locations={locations}
+          state={searchParams.get('state') || ''}
+          city={searchParams.get('city') || ''}
+          onChange={({ state, city }) => aplicarFiltros({ state, city })}
+          locating={locating}
+          onUseLocation={handleUseLocation}
+        />
 
         {loading && (
           <div className="sr-loading">
