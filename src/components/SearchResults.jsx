@@ -42,9 +42,14 @@ function ProviderCard({ provider }) {
         <div className="sr-name">
           {provider.name}
           {Number(provider.is_verified) === 1 && (
-            <span className="sr-verified" title="Antecedentes e identidade verificados">
+            <span className="sr-verified" title="Identidade confirmada com documento e prova de vida">
               <BadgeCheck size={14} strokeWidth={2.4} aria-hidden="true" />
               Verificado
+            </span>
+          )}
+          {provider.document_type === 'cnpj' && Number(provider.verification_level) >= 3 && (
+            <span className="sr-empresa" title="Empresa ativa na Receita Federal">
+              {Number(provider.is_mei) === 1 ? 'MEI' : 'Empresa'}
             </span>
           )}
         </div>

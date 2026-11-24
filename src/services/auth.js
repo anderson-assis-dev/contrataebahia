@@ -42,6 +42,11 @@ export const updateAvatar = async (avatarBase64) => {
   return data;
 };
 
+export const submitLiveness = async (frames) => {
+  const { data } = await http.post('/auth/liveness', { frames });
+  return data;
+};
+
 export const resendActivation = async (email) => {
   const { data } = await http.post('/auth/resend-activation', { email });
   return data;

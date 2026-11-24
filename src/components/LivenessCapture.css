@@ -1,0 +1,160 @@
+.lc-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(7, 28, 77, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.lc-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 28px 24px 24px;
+  text-align: center;
+}
+
+.lc-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  padding: 4px;
+  border-radius: 50%;
+}
+.lc-close:hover {
+  color: var(--text);
+}
+
+.lc-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+
+.lc-titulo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.lc-texto {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 8px auto 18px;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.lc-palco {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--blue-50);
+}
+
+.lc-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.lc-anel {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 3px var(--blue-100);
+  pointer-events: none;
+}
+.lc-palco.lc-ativo .lc-anel {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px var(--blue-300);
+}
+.lc-palco.lc-rosto-ok .lc-anel {
+  border-color: #28c76f;
+  box-shadow: 0 0 0 4px rgba(40, 199, 111, 0.4);
+}
+
+.lc-dica {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.lc-dica-ok {
+  color: #1a9d5a;
+}
+
+.lc-carregando {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(7, 28, 77, 0.45);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@keyframes lc-girar {
+  to { transform: rotate(360deg); }
+}
+.lc-girando {
+  animation: lc-girar 0.8s linear infinite;
+}
+
+.lc-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.lc-erro {
+  font-size: 0.85rem;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+
+.lc-estado {
+  padding: 12px 0 4px;
+}
+
+.lc-icone-ok {
+  color: #1a9d5a;
+  margin-bottom: 12px;
+}
+.lc-icone-erro {
+  color: var(--red);
+  margin-bottom: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lc-palco {
+    background: var(--blue-900, #071c4d);
+  }
+}

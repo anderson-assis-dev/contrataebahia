@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { LOGO_SRC } from '../utils/brand';
+import VerificationBanner from '../components/VerificationBanner';
 import './AppLayout.css';
 
 const CLIENT_NAV = [
@@ -100,6 +101,7 @@ export default function AppLayout() {
         </header>
 
         <main className="app-content">
+          <VerificationBanner />
           <Outlet />
         </main>
 

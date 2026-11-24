@@ -74,6 +74,11 @@
   color: var(--blue-800);
 }
 
+.prop-tag-empresa {
+  background: #e3f6ec;
+  color: #127a44;
+}
+
 .prop-price {
   flex-shrink: 0;
   text-align: right;

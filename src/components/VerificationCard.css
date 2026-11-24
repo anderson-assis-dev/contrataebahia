@@ -1,0 +1,118 @@
+.vc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.vc-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blue);
+}
+
+.vc-selo {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.vc-nivel-0 { background: var(--border); color: var(--muted); }
+.vc-nivel-1 { background: var(--blue-50); color: var(--blue); }
+.vc-nivel-2 { background: #e3f6ec; color: #1a9d5a; }
+.vc-nivel-3 { background: #e3f6ec; color: #127a44; }
+
+.vc-sub {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.vc-etapas {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vc-etapa {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.vc-etapa.vc-ok {
+  border-color: #bfe8d0;
+  background: #f4fbf7;
+}
+
+.vc-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--border);
+  color: var(--muted);
+}
+.vc-ok .vc-check {
+  background: #1a9d5a;
+  color: #fff;
+}
+
+.vc-etapa-icone {
+  color: var(--muted);
+  display: flex;
+  flex-shrink: 0;
+}
+.vc-ok .vc-etapa-icone {
+  color: #1a9d5a;
+}
+
+.vc-etapa-txt {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.vc-etapa-txt strong {
+  font-size: 0.9rem;
+  color: var(--text);
+  font-weight: 600;
+}
+.vc-etapa-txt small {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.vc-acao {
+  flex-shrink: 0;
+  border: 1.5px solid var(--blue);
+  background: var(--blue);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.vc-acao:hover {
+  opacity: 0.9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .vc-etapa.vc-ok { background: rgba(26, 157, 90, 0.12); }
+  :root:not([data-theme="light"]) .vc-nivel-2,
+  :root:not([data-theme="light"]) .vc-nivel-3 { background: rgba(26, 157, 90, 0.18); }
+}

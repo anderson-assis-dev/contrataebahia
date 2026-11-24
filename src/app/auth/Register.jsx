@@ -7,7 +7,8 @@ import { registerError } from '../../services/http';
 import { listCategories } from '../../services/catalog';
 import { REF_STORAGE_KEY } from '../../utils/api';
 import { STATIC_CATEGORIES } from '../../data/categories';
-import { formatCpf, formatDate, formatPhone, normalizePhone, onlyDigits, parseDateToISO } from '../../utils/format';
+import { formatCpfCnpj, formatDate, formatPhone, normalizePhone, onlyDigits, parseDateToISO } from '../../utils/format';
+import { lerDocumento } from '../../utils/documento';
 import '../forms.css';
 import '../ui.css';
 import './Register.css';
@@ -110,7 +111,7 @@ export default function Register() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'phone') return setForm((f) => ({ ...f, phone: formatPhone(value) }));
-    if (name === 'cpf') return setForm((f) => ({ ...f, cpf: formatCpf(value) }));
+    if (name === 'cpf') return setForm((f) => ({ ...f, cpf: formatCpfCnpj(value) }));
     if (name === 'birth_date') return setForm((f) => ({ ...f, birth_date: formatDate(value) }));
     return setForm((f) => ({ ...f, [name]: value }));
   };
@@ -125,9 +126,20 @@ export default function Register() {
   const passoValido = () => {
     if (formRef.current && !formRef.current.reportValidity()) return false;
 
-    if (passo === 2 && form.password !== form.confirm) {
-      setError('As senhas não coincidem.');
-      return false;
+    if (passo === 2) {
+      if (form.password !== form.confirm) {
+        setError('As senhas não coincidem.');
+        return false;
+      }
+      const doc = lerDocumento(form.cpf);
+      if (isProvider && doc.vazio) {
+        setError('Informe seu CPF ou CNPJ para verificar o perfil.');
+        return false;
+      }
+      if (!doc.vazio && !doc.valido) {
+        setError('CPF ou CNPJ inválido. Confira os números.');
+        return false;
+      }
     }
 
     if (passo === 3) {
@@ -308,14 +320,14 @@ export default function Register() {
 
               <div className="f-field">
                 <label htmlFor="reg-cpf">
-                  CPF <span className="f-optional">(opcional)</span>
+                  CPF ou CNPJ {!isProvider && <span className="f-optional">(opcional)</span>}
                 </label>
                 <input
                   id="reg-cpf"
                   className="f-input"
                   name="cpf"
                   inputMode="numeric"
-                  placeholder="000.000.000-00"
+                  placeholder="CPF ou CNPJ"
                   value={form.cpf}
                   onChange={handleChange}
                 />

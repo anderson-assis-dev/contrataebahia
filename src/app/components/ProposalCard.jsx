@@ -18,6 +18,10 @@ export default function ProposalCard({ proposal, onAccept, onReject, busy, canDe
   const avatar = proposal.provider_avatar_base64 || provider.avatar_base64;
   const premium = Boolean(proposal.provider_is_premium ?? provider.is_premium);
   const verified = Boolean(proposal.provider_is_verified ?? provider.is_verified);
+  const nivel = Number(proposal.provider_verification_level ?? provider.verification_level ?? 0);
+  const docTipo = proposal.provider_document_type ?? provider.document_type;
+  const ehMei = Boolean(proposal.provider_is_mei ?? provider.is_mei);
+  const empresaVerificada = docTipo === 'cnpj' && nivel >= 3;
   const rating = provider.avg_rating ?? provider.rate;
 
   return (
@@ -39,9 +43,14 @@ export default function ProposalCard({ proposal, onAccept, onReject, busy, canDe
               </span>
             )}
             {verified && (
-              <span className="prop-tag prop-tag-verified" title="Perfil verificado">
+              <span className="prop-tag prop-tag-verified" title="Identidade confirmada com documento e prova de vida">
                 <BadgeCheck size={12} />
                 Verificado
+              </span>
+            )}
+            {empresaVerificada && (
+              <span className="prop-tag prop-tag-empresa" title="Empresa ativa na Receita Federal">
+                {ehMei ? 'MEI' : 'Empresa'}
               </span>
             )}
           </div>
